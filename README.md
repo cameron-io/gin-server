@@ -1,1 +1,1 @@
-# gin-server
+# gopher-server

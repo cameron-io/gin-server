@@ -1,13 +1,12 @@
 
 volumes:
   db-data:
-  pgadmin-data:
 
 services:
 
   server:
-    container_name: gin
-    image: gin:latest
+    container_name: gopher
+    image: gopher:latest
     depends_on:
       - db
     restart: always
@@ -15,33 +14,22 @@ services:
      - 5000:5000
 
   db:
-    container_name: pg
-    image: postgres:15
+    container_name: mongodb
+    image: mongo
     restart: always
+    command: [--auth]
     environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASS}
-      POSTGRES_DB: ${DATABASE_NAME}
+      MONGODB_INITDB_ROOT_USERNAME: ${DATABASE_ROOT_USER}
+      MONGODB_INITDB_ROOT_PASSWORD: ${DATABASE_ROOT_PASS}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASS: ${DATABASE_PASS}
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/data/db
+      - ./db-init.js:/docker-entrypoint-initdb.d/mongo-init.js
     healthcheck:
-        test: ["CMD-SHELL", "pg_isready -d ${DATABASE_NAME} -U ${DATABASE_USER}"]
+        test: "echo 'db.runCommand(\"ping\").ok' | mongosh ${DATABASE_HOST}:${DATABASE_PORT}/test --quiet"
         interval: 30s
         timeout: 5s
         retries: 5
     ports:
       - "${DATABASE_PORT}:${DATABASE_PORT}"
-
-  admin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    depends_on:
-      - db
-    restart: always
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${DATABASE_ADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${DATABASE_ADMIN_PASS}
-    ports:
-      - "5050:80"

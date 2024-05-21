@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-SERVER_NAME := gin
+SERVER_NAME := gopher
 SERVER_SOURCE = src
 SERVER_APP := $(SERVER_SOURCE)/app.py
 BUILD_TAG := latest
