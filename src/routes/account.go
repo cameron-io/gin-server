@@ -7,6 +7,4 @@ import (
 
 func AccountRoutes(r *gin.Engine) {
 	r.POST("/accounts", api.PostAccount)
-	r.GET("/accounts", api.GetAccount)
-	r.POST("/accounts/:id", api.PostAccount)
 }

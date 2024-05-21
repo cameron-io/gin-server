@@ -13,7 +13,7 @@ import (
 var mongoClient *mongo.Client
 var collection = mongoClient.Database("gopher").Collection("account")
 
-func FindUserByEmail(ctx *gin.Context, email string) bson.M {
+func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 	// retrieve single and multiple documents with a specified filter using FindOne() and Find()
 	// create a search filer
 	filter := bson.D{
@@ -24,12 +24,12 @@ func FindUserByEmail(ctx *gin.Context, email string) bson.M {
 	var result bson.M
 	if err := collection.FindOne(ctx, filter).Decode(&result); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil
+			return nil, nil
 		}
-		panic(err)
+		return nil, err
 	}
 
-	return result
+	return result, nil
 }
 
 func CreateAccount(ctx *gin.Context, new_account models.Account) (*mongo.InsertOneResult, error) {

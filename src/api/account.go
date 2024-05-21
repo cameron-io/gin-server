@@ -15,26 +15,21 @@ func PostAccount(ctx *gin.Context) {
 		return
 	}
 
-	if db.FindUserByEmail(ctx, new_account.Email) != nil {
+	existing_user, err := db.FindUserByEmail(ctx, new_account.Email)
+	if err != nil {
+		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
+		return
+	}
+	if existing_user != nil {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"msg": "user already exists"})
 		return
 	}
 
-	result, err := db.CreateAccount(ctx, new_account)
-
+	created_user, err := db.CreateAccount(ctx, new_account)
 	if err != nil {
-		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
 		return
 	}
 
-	ctx.IndentedJSON(http.StatusCreated, result)
-}
-
-func GetAccount(ctx *gin.Context) {
-	ctx.IndentedJSON(http.StatusOK, ctx)
-}
-
-func GetAccountById(ctx *gin.Context) {
-	// id := ctx.Param("id")
-	ctx.IndentedJSON(http.StatusOK, ctx)
+	ctx.IndentedJSON(http.StatusCreated, created_user)
 }
