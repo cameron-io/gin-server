@@ -17,10 +17,7 @@ func FindUserByEmail(ctx *gin.Context, email string) bson.M {
 	// retrieve single and multiple documents with a specified filter using FindOne() and Find()
 	// create a search filer
 	filter := bson.D{
-		{
-			Key:   "email",
-			Value: email,
-		},
+		{Key: "email", Value: email},
 	}
 
 	// retrieve all the documents that match the filter
