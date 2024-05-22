@@ -7,11 +7,21 @@ import (
 	"cameron.io/gin-server/src/db"
 	"cameron.io/gin-server/src/models"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 )
 
 func PostAccount(ctx *gin.Context) {
 	var new_account models.Account
 	if err := ctx.ShouldBindJSON(&new_account); err != nil {
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// Create a new validator instance
+	validate := validator.New()
+
+	// Validate the User struct
+	if err := validate.Struct(new_account); err != nil {
+		// Validation failed, handle the error
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
