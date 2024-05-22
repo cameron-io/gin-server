@@ -1,7 +1,6 @@
 package models
 
-type Account struct {
-	Name      string `json:"username" validate:"required,min=5,max=50"`
+type User struct {
 	Email     string `json:"email" validate:"required,email"`
 	Password  string `json:"password" validate:"required,min=10,max=50"`
 	Avatar    string `json:"avatar"`

@@ -5,6 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AccountRoutes(r *gin.Engine) {
-	r.POST("/accounts", api.PostAccount)
+func UserRoutes(r *gin.Engine) {
+	r.POST("/register", api.RegisterUser)
 }

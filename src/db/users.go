@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var accountCollection *mongo.Collection = config.GetCollection(config.DB, "account")
+var userCollection *mongo.Collection = config.GetCollection(config.DB, "user")
 
 func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 	// retrieve single and multiple documents with a specified filter using FindOne() and Find()
@@ -21,7 +21,7 @@ func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 
 	// retrieve all the documents that match the filter
 	var result bson.M
-	if err := accountCollection.FindOne(ctx, filter).Decode(&result); err != nil {
+	if err := userCollection.FindOne(ctx, filter).Decode(&result); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
 		}
@@ -31,6 +31,6 @@ func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 	return result, nil
 }
 
-func CreateAccount(ctx *gin.Context, new_account models.Account) (*mongo.InsertOneResult, error) {
-	return accountCollection.InsertOne(context.TODO(), new_account)
+func CreateUser(ctx *gin.Context, new_user models.User) (*mongo.InsertOneResult, error) {
+	return userCollection.InsertOne(context.TODO(), new_user)
 }
