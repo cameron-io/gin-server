@@ -5,5 +5,5 @@ type Account struct {
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 	Avatar    string `json:"avatar"`
-	CreatedAt uint   `json:"created_at"`
+	CreatedAt int64  `json:"created_at"`
 }

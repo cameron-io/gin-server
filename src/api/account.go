@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"cameron.io/gin-server/src/db"
 	"cameron.io/gin-server/src/models"
@@ -25,6 +26,7 @@ func PostAccount(ctx *gin.Context) {
 		return
 	}
 
+	new_account.CreatedAt = time.Now().UnixMilli()
 	created_user, err := db.CreateAccount(ctx, new_account)
 	if err != nil {
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
