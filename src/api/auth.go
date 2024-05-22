@@ -10,7 +10,7 @@ import (
 	"github.com/go-playground/validator"
 )
 
-func Authenticate(ctx *gin.Context) {
+func AuthUser(ctx *gin.Context) {
 	var user models.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
