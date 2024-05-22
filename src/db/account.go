@@ -3,15 +3,14 @@ package db
 import (
 	"context"
 
+	"cameron.io/gin-server/src/config"
 	"cameron.io/gin-server/src/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Create a global variable to hold our MongoDB connection
-var mongoClient *mongo.Client
-var collection = mongoClient.Database("gopher").Collection("account")
+var accountCollection *mongo.Collection = config.GetCollection(config.DB, "account")
 
 func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 	// retrieve single and multiple documents with a specified filter using FindOne() and Find()
@@ -22,7 +21,7 @@ func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 
 	// retrieve all the documents that match the filter
 	var result bson.M
-	if err := collection.FindOne(ctx, filter).Decode(&result); err != nil {
+	if err := accountCollection.FindOne(ctx, filter).Decode(&result); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
 		}
@@ -33,5 +32,5 @@ func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 }
 
 func CreateAccount(ctx *gin.Context, new_account models.Account) (*mongo.InsertOneResult, error) {
-	return collection.InsertOne(context.TODO(), new_account)
+	return accountCollection.InsertOne(context.TODO(), new_account)
 }
