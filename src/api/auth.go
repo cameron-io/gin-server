@@ -36,7 +36,11 @@ func Authenticate(ctx *gin.Context) {
 		return
 	}
 
+	token, token_err := utils.CreateToken(user.Email)
+	if token_err != nil {
+		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"token_error": token_err.Error()})
+		return
+	}
+	ctx.SetCookie("token", token, 3600, "/", "localhost", false, true)
 	ctx.Status(http.StatusOK)
-
-	// TODO: Return HttpOnly JWT Cookie
 }
