@@ -3,9 +3,9 @@ package api
 import (
 	"net/http"
 
+	"cameron.io/gin-server/src/auth"
 	"cameron.io/gin-server/src/db"
 	"cameron.io/gin-server/src/models"
-	"cameron.io/gin-server/src/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
@@ -30,13 +30,13 @@ func AuthUser(ctx *gin.Context) {
 		ctx.IndentedJSON(http.StatusNotFound, gin.H{"msg": "invalid credentials."})
 		return
 	}
-	is_match := utils.CheckPasswordHash(user_auth.Password)
+	is_match := auth.CheckPasswordHash(user_auth.Password)
 	if !is_match {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"msg": "invalid credentials."})
 		return
 	}
 
-	token, token_err := utils.CreateToken(user_auth.Email)
+	token, token_err := auth.CreateToken(user_auth.Email)
 	if token_err != nil {
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"token_error": token_err.Error()})
 		return

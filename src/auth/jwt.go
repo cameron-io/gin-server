@@ -1,4 +1,4 @@
-package utils
+package auth
 
 import (
 	"os"
@@ -10,7 +10,7 @@ import (
 var secretKey = os.Getenv("JWT_SECRET")
 
 func CreateToken(username string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+	token := jwt.NewWithClaims(&jwt.SigningMethodHMAC{},
 		jwt.MapClaims{
 			"username": username,
 			"exp":      time.Now().Add(time.Hour * 24).Unix(),

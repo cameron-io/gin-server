@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
+	"cameron.io/gin-server/src/auth"
 	"cameron.io/gin-server/src/db"
 	"cameron.io/gin-server/src/models"
-	"cameron.io/gin-server/src/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
@@ -34,7 +34,7 @@ func RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	if new_user.Password, err = utils.HashPassword(new_user.Password); err != nil {
+	if new_user.Password, err = auth.HashPassword(new_user.Password); err != nil {
 		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
 		return
 	}
