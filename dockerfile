@@ -6,4 +6,4 @@ ADD go.mod .
 ADD go.sum .
 ADD . .
 RUN source .env
-CMD go run src/
+CMD go run .
