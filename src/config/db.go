@@ -11,21 +11,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Client instance
 // Find .env file
 var _ = godotenv.Load()
+
+// Client instance
 var DB *mongo.Client = ConnectDB()
 
 func ConnectDB() *mongo.Client {
 	client, conn_err := mongo.Connect(
 		context.TODO(),
-		options.Client().ApplyURI(
-			"mongodb://"+
-				os.Getenv("DB_USER")+":"+os.Getenv("DB_PASS")+
-				"@"+
-				"mongodb"+":"+os.Getenv("DB_PORT")+
-				"/"+
-				os.Getenv("DB_NAME")),
+		options.Client().ApplyURI(os.Getenv("DB_URI")),
 	)
 	if conn_err != nil {
 		log.Fatal("Could not connect to MongoDB")
