@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
+	"cameron.io/gin-server/api"
 	"cameron.io/gin-server/middleware"
-	"cameron.io/gin-server/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +13,7 @@ func main() {
 
 	r.Use(middleware.TokenAuthentication())
 
-	routes.UserRoutes(r)
+	api.UserRoutes(r)
 
 	r.Run("localhost:" + os.Getenv("SERVER_PORT"))
 }

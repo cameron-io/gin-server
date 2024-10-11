@@ -1,16 +1,17 @@
-package db
+package services
 
 import (
 	"context"
 
 	"cameron.io/gin-server/config"
+	"cameron.io/gin-server/db"
 	"cameron.io/gin-server/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var userCollection *mongo.Collection = config.GetCollection(config.DB, "user")
+var userCollection *mongo.Collection = db.GetCollection(config.MongoConnection, "user")
 
 func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 	// retrieve single and multiple documents with a specified filter using FindOne() and Find()

@@ -2,7 +2,6 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -11,11 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Find .env file
 var _ = godotenv.Load()
 
 // Client instance
-var DB *mongo.Client = ConnectDB()
+var MongoConnection *mongo.Client = ConnectDB()
 
 func ConnectDB() *mongo.Client {
 	client, conn_err := mongo.Connect(
@@ -31,12 +29,6 @@ func ConnectDB() *mongo.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Connected to MongoDB")
+	log.Println("Connected to MongoDB")
 	return client
-}
-
-// getting database collections
-func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-	collection := client.Database("gopher").Collection(collectionName)
-	return collection
 }
