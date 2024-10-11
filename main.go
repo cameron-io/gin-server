@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"cameron.io/gin-server/src/middleware"
-	"cameron.io/gin-server/src/routes"
+	"cameron.io/gin-server/middleware"
+	"cameron.io/gin-server/routes"
 	"github.com/gin-gonic/gin"
 )
 

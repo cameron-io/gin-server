@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"cameron.io/gin-server/src/api"
+	"cameron.io/gin-server/api"
 	"github.com/gin-gonic/gin"
 )
 

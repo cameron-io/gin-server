@@ -3,8 +3,8 @@ package db
 import (
 	"context"
 
-	"cameron.io/gin-server/src/config"
-	"cameron.io/gin-server/src/models"
+	"cameron.io/gin-server/config"
+	"cameron.io/gin-server/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
