@@ -13,9 +13,9 @@ import (
 var _ = godotenv.Load()
 
 // Client instance
-var MongoConnection *mongo.Client = ConnectDB()
+var MongoConnection *mongo.Client = connectDB()
 
-func ConnectDB() *mongo.Client {
+func connectDB() *mongo.Client {
 	client, conn_err := mongo.Connect(
 		context.TODO(),
 		options.Client().ApplyURI(os.Getenv("DB_URI")),
