@@ -15,5 +15,6 @@ func main() {
 
 	routes.UserRoutes(r)
 
+	r.SetTrustedProxies(nil)
 	r.Run("localhost:" + os.Getenv("SERVER_PORT"))
 }
