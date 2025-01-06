@@ -16,15 +16,8 @@ func TokenAuthentication() gin.HandlerFunc {
 			ctx.IndentedJSON(http.StatusUnauthorized, gin.H{"error": cookie_err.Error()})
 			return
 		}
-		key_fun := func(token *jwt.Token) (interface{}, error) {
-			// validate JWT-signing algorithm
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
 
-			return []byte(os.Getenv("JWT_SECRET")), nil
-		}
-		token, err := jwt.Parse(token_str, key_fun)
+		token, err := jwt.Parse(token_str, keyFunc)
 		if err != nil {
 			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 		}
@@ -37,4 +30,13 @@ func TokenAuthentication() gin.HandlerFunc {
 
 		ctx.Next()
 	}
+}
+
+func keyFunc(token *jwt.Token) (interface{}, error) {
+	// validate JWT-signing algorithm
+	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+	}
+
+	return []byte(os.Getenv("JWT_SECRET")), nil
 }
