@@ -85,7 +85,7 @@ func authHandler() func(c *gin.Context) (interface{}, error) {
 			user_auth.Password,
 			existing_user["password"].(string),
 		); err != nil {
-			return "", jwt.ErrFailedAuthentication
+			return "", err
 		}
 
 		return &models.Identity{
