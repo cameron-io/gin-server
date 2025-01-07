@@ -20,11 +20,14 @@ func main() {
 	}
 	r.Use(middleware.InitHandlerMiddleware(authHandle))
 
-	rGroupAcc := r.Group("/api/accounts")
+	rGroupApi := r.Group("/api")
+
+	// Accounts - Public Routes
+	rGroupAcc := rGroupApi.Group("/accounts")
 	rGroupAcc.POST("/register", api.RegisterUser)
 	rGroupAcc.POST("/login", authHandle.LoginHandler)
 
-	// Protected Routes
+	// Accounts - Protected Routes
 	rGroupAuth := rGroupAcc.Group("/", authHandle.MiddlewareFunc())
 	rGroupAuth.GET("/refresh_token", authHandle.RefreshHandler)
 	rGroupAuth.POST("/logout", authHandle.LogoutHandler)
