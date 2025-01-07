@@ -11,10 +11,12 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func IsPasswordMatched(password string) error {
-	hash, hash_err := HashPassword(password)
-	if hash_err != nil {
+func MatchPasswords(input_pw string, db_pw string) error {
+	hashed_pw, err := HashPassword(input_pw)
+	if err != nil {
 		return errors.New("internal error")
 	}
-	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return bcrypt.CompareHashAndPassword(
+		[]byte(hashed_pw),
+		[]byte(db_pw))
 }

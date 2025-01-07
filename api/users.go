@@ -51,11 +51,6 @@ func UserRoutes(r *gin.Engine) {
 			return
 		}
 
-		created_user, err := services.FindUserByEmail(ctx, new_user.Email)
-		if err != nil {
-			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
-			return
-		}
-		ctx.IndentedJSON(http.StatusCreated, created_user)
+		ctx.Status(201)
 	})
 }

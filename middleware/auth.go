@@ -81,7 +81,10 @@ func authHandler() func(c *gin.Context) (interface{}, error) {
 			return "", jwt.ErrFailedAuthentication
 		}
 
-		if err := utils.IsPasswordMatched(user_auth.Password); err != nil {
+		if err := utils.MatchPasswords(
+			user_auth.Password,
+			existing_user["password"].(string),
+		); err != nil {
 			return "", jwt.ErrFailedAuthentication
 		}
 
