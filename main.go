@@ -32,6 +32,7 @@ func main() {
 	rGroupAuth.GET("/refresh_token", authHandle.RefreshHandler)
 	rGroupAuth.POST("/logout", authHandle.LogoutHandler)
 	rGroupAuth.GET("/info", api.GetUserInfo)
+	rGroupAuth.DELETE("/", api.DeleteUser)
 
 	r.SetTrustedProxies(nil)
 	r.Run(os.Getenv("SERVER_URI"))

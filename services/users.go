@@ -13,12 +13,12 @@ import (
 
 var userCollection *mongo.Collection = db.GetCollection(config.MongoConnection, "user")
 
-func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
-	filter := bson.D{
-		{Key: "email", Value: email},
+func FindUserByEmail(c *gin.Context, email string) (bson.M, error) {
+	filter := bson.M{
+		"email": email,
 	}
 	var result bson.M
-	if err := userCollection.FindOne(ctx, filter).Decode(&result); err != nil {
+	if err := userCollection.FindOne(c, filter).Decode(&result); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
 		}
@@ -27,6 +27,20 @@ func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 	return result, nil
 }
 
-func CreateUser(ctx *gin.Context, new_user models.User) (*mongo.InsertOneResult, error) {
+func CreateUser(c *gin.Context, new_user models.User) (*mongo.InsertOneResult, error) {
 	return userCollection.InsertOne(context.TODO(), new_user)
+}
+
+func DeleteUserByEmail(c *gin.Context, email string) (bool, error) {
+	filter := bson.M{
+		"email": email,
+	}
+	res := userCollection.FindOneAndDelete(context.TODO(), filter)
+	if err := res.Err(); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }

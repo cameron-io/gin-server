@@ -16,44 +16,62 @@ func GetUserInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func RegisterUser(ctx *gin.Context) {
+func RegisterUser(c *gin.Context) {
 	var new_user models.User
 
-	if err := ctx.ShouldBindJSON(&new_user); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := c.ShouldBindJSON(&new_user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	// Validate the User struct
 	if err := validator.New().Struct(new_user); err != nil {
 		// Validation failed, handle the error
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// Check if user already exists
-	existing_user, err := services.FindUserByEmail(ctx, new_user.Email)
+	existing_user, err := services.FindUserByEmail(c, new_user.Email)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
 		return
 	}
 	if existing_user != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"msg": "user already exists"})
+		c.JSON(http.StatusBadRequest, gin.H{"msg": "user already exists"})
 		return
 	}
 
 	// Hash password
 	if new_user.Password, err = utils.HashPassword(new_user.Password); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
 		return
 	}
 
 	// Create new user
 	new_user.CreatedAt = time.Now().UnixMilli()
 
-	if _, err := services.CreateUser(ctx, new_user); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
+	if _, err := services.CreateUser(c, new_user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
 		return
 	}
 
-	ctx.Status(201)
+	c.Status(http.StatusCreated)
+}
+
+func DeleteUser(c *gin.Context) {
+	user, _ := c.Get("identity")
+	user_email := user.(map[string]interface{})["email"].(string)
+
+	res, err := services.DeleteUserByEmail(c, user_email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if !res {
+		c.JSON(http.StatusNotFound, gin.H{"user_not_found": user_email})
+		return
+	}
+
+	c.Status(http.StatusOK)
 }
