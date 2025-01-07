@@ -28,7 +28,7 @@ func main() {
 	api.UserRoutes(r)
 
 	r.SetTrustedProxies(nil)
-	r.Run("localhost:" + os.Getenv("SERVER_PORT"))
+	r.Run(os.Getenv("SERVER_URI"))
 }
 
 func testHandler(c *gin.Context) {

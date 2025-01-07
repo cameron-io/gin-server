@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -29,10 +30,13 @@ func InitParams() *jwt.GinJWTMiddleware {
 		IdentityHandler: identityHandler(),
 		Authenticator:   authHandler(),
 
-		TokenLookup: "header: Authorization, query: token, cookie: jwt",
-		// TokenLookup: "query:token",
-		// TokenLookup: "cookie:token",
-		TokenHeadName: "Bearer",
+		SendCookie:     true,
+		SecureCookie:   os.Getenv("SERVER_ENV") == "production",
+		CookieHTTPOnly: true,
+		CookieDomain:   os.Getenv("SERVER_URI"),
+		CookieName:     "token",
+		TokenLookup:    "cookie:token",
+		CookieSameSite: http.SameSiteDefaultMode, //SameSiteDefaultMode, SameSiteLaxMode, SameSiteStrictMode, SameSiteNoneMode
 
 		TimeFunc: time.Now,
 	}
