@@ -17,40 +17,40 @@ func GetUserInfo(c *gin.Context) {
 }
 
 func RegisterUser(c *gin.Context) {
-	var new_user entities.User
+	var newUser entities.User
 
-	if err := c.ShouldBindJSON(&new_user); err != nil {
+	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	// Validate the User struct
-	if err := validator.New().Struct(new_user); err != nil {
+	if err := validator.New().Struct(newUser); err != nil {
 		// Validation failed, handle the error
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// Check if user already exists
-	existing_user, err := services.FindUserByEmail(c, new_user.Email)
+	existingUser, err := services.FindUserByEmail(c, newUser.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
 		return
 	}
-	if existing_user != nil {
+	if existingUser != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "user already exists"})
 		return
 	}
 
 	// Hash password
-	if new_user.Password, err = utils.HashPassword(new_user.Password); err != nil {
+	if newUser.Password, err = utils.HashPassword(newUser.Password); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
 		return
 	}
 
 	// Create new user
-	new_user.CreatedAt = time.Now().UnixMilli()
+	newUser.CreatedAt = time.Now().UnixMilli()
 
-	if _, err := services.CreateUser(c, new_user); err != nil {
+	if _, err := services.CreateUser(c, newUser); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
 		return
 	}
@@ -59,13 +59,13 @@ func RegisterUser(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
-	user_id, claims_err := services.GetUserIdFromClaims(c)
-	if claims_err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": claims_err.Error()})
+	userId, claimsErr := services.GetUserIdFromClaims(c)
+	if claimsErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": claimsErr.Error()})
 		return
 	}
 
-	res, err := services.DeleteUserByID(c, user_id)
+	res, err := services.DeleteUserByID(c, userId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

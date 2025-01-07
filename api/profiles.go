@@ -10,27 +10,27 @@ import (
 )
 
 func UpsertProfile(c *gin.Context) {
-	var new_profile entities.Profile
+	var newProfile entities.Profile
 
-	if err := c.ShouldBindJSON(&new_profile); err != nil {
+	if err := c.ShouldBindJSON(&newProfile); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := validator.New().Struct(new_profile); err != nil {
+	if err := validator.New().Struct(newProfile); err != nil {
 		// Validation failed, handle the error
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	user_id, conv_err := services.GetUserIdFromClaims(c)
-	if conv_err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"conv_error": conv_err.Error()})
+	userId, convErr := services.GetUserIdFromClaims(c)
+	if convErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"conv_error": convErr.Error()})
 		return
 	}
-	new_profile.User = user_id
+	newProfile.User = userId
 
-	profile, err := services.UpsertProfile(c, user_id, new_profile)
+	profile, err := services.UpsertProfile(c, userId, newProfile)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"db_upsert_error": err.Error()})
 		return

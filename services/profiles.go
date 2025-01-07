@@ -19,10 +19,10 @@ var (
 
 func UpsertProfile(
 	c *gin.Context,
-	user_obj_id primitive.ObjectID,
+	userObjId primitive.ObjectID,
 	profile entities.Profile,
 ) (bson.M, error) {
-	filter := bson.M{"user": user_obj_id}
+	filter := bson.M{"user": userObjId}
 	options := options.FindOneAndReplaceOptions{Upsert: &UpsertMode}
 
 	var result bson.M

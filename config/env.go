@@ -16,11 +16,11 @@ var _ = godotenv.Load()
 var MongoConnection *mongo.Client = connectDB()
 
 func connectDB() *mongo.Client {
-	client, conn_err := mongo.Connect(
+	client, connErr := mongo.Connect(
 		context.TODO(),
 		options.Client().ApplyURI(os.Getenv("DB_URI")),
 	)
-	if conn_err != nil {
+	if connErr != nil {
 		log.Fatal("Could not connect to MongoDB")
 	}
 

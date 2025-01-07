@@ -7,7 +7,7 @@ import (
 
 func GetUserIdFromClaims(c *gin.Context) (primitive.ObjectID, error) {
 	user, _ := c.Get("identity")
-	user_id := user.(map[string]interface{})["id"].(string)
+	userId := user.(map[string]interface{})["id"].(string)
 
-	return primitive.ObjectIDFromHex(user_id)
+	return primitive.ObjectIDFromHex(userId)
 }
