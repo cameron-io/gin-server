@@ -59,17 +59,20 @@ func RegisterUser(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
-	user, _ := c.Get("identity")
-	user_email := user.(map[string]interface{})["email"].(string)
+	user_obj_id, claims_err := services.GetUserIdFromClaims(c)
+	if claims_err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": claims_err.Error()})
+		return
+	}
 
-	res, err := services.DeleteUserByEmail(c, user_email)
+	res, err := services.DeleteUserByID(c, user_obj_id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if !res {
-		c.JSON(http.StatusNotFound, gin.H{"user_not_found": user_email})
+		c.Status(http.StatusNotFound)
 		return
 	}
 

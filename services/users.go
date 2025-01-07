@@ -8,6 +8,7 @@ import (
 	"cameron.io/gin-server/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -31,16 +32,18 @@ func CreateUser(c *gin.Context, new_user models.User) (*mongo.InsertOneResult, e
 	return userCollection.InsertOne(context.TODO(), new_user)
 }
 
-func DeleteUserByEmail(c *gin.Context, email string) (bool, error) {
-	filter := bson.M{
-		"email": email,
-	}
-	res := userCollection.FindOneAndDelete(context.TODO(), filter)
-	if err := res.Err(); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return false, nil
+func DeleteUserByID(c *gin.Context, id primitive.ObjectID) (bool, error) {
+	ctx := context.TODO()
+	if err := profileCollection.FindOneAndDelete(ctx, bson.M{"user": id}).Err(); err != nil {
+		if err != mongo.ErrNoDocuments {
+			return false, err
 		}
-		return false, err
+	}
+	if err := userCollection.FindOneAndDelete(ctx, bson.M{"_id": id}).Err(); err != nil {
+		if err != mongo.ErrNoDocuments {
+			return false, err
+		}
+		return false, nil
 	}
 	return true, nil
 }
