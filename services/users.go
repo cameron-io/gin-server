@@ -17,16 +17,10 @@ func FindUserByEmail(ctx *gin.Context, email string) (bson.M, error) {
 	filter := bson.D{
 		{Key: "email", Value: email},
 	}
-
-	// retrieve documents that match the filter
 	var result bson.M
 	if err := userCollection.FindOne(ctx, filter).Decode(&result); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, nil
-		}
 		return nil, err
 	}
-
 	return result, nil
 }
 

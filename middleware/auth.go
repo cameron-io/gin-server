@@ -1,42 +1,94 @@
 package middleware
 
 import (
-	"fmt"
-	"net/http"
+	"log"
 	"os"
+	"time"
 
+	"cameron.io/gin-server/models"
+	"cameron.io/gin-server/services"
+	"cameron.io/gin-server/utils"
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/go-playground/validator"
 )
 
-func TokenAuthentication() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		token_str, cookie_err := ctx.Cookie("token")
-		if cookie_err != nil {
-			ctx.IndentedJSON(http.StatusUnauthorized, gin.H{"error": cookie_err.Error()})
-			return
-		}
+var (
+	identityKey = "identity"
+)
 
-		token, err := jwt.Parse(token_str, keyFunc)
-		if err != nil {
-			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
-		}
+func InitParams() *jwt.GinJWTMiddleware {
+	return &jwt.GinJWTMiddleware{
+		Realm:       os.Getenv("SERVER_NAME") + "_user",
+		Key:         []byte(os.Getenv("JWT_SECRET")),
+		Timeout:     time.Hour,
+		MaxRefresh:  time.Hour,
+		IdentityKey: identityKey,
+		PayloadFunc: payloadFunc(),
 
-		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			ctx.Set("user_claims", claims)
-		} else {
-			ctx.IndentedJSON(http.StatusUnauthorized, gin.H{"msg": "invalid token."})
-		}
+		IdentityHandler: identityHandler(),
+		Authenticator:   authHandler(),
 
-		ctx.Next()
+		TokenLookup: "header: Authorization, query: token, cookie: jwt",
+		// TokenLookup: "query:token",
+		// TokenLookup: "cookie:token",
+		TokenHeadName: "Bearer",
+
+		TimeFunc: time.Now,
 	}
 }
 
-func keyFunc(token *jwt.Token) (interface{}, error) {
-	// validate JWT-signing algorithm
-	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+func InitHandlerMiddleware(authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		errInit := authMiddleware.MiddlewareInit()
+		if errInit != nil {
+			log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
+		}
 	}
+}
 
-	return []byte(os.Getenv("JWT_SECRET")), nil
+func payloadFunc() func(data interface{}) jwt.MapClaims {
+	return func(data interface{}) jwt.MapClaims {
+		if user, ok := data.(*models.Identity); ok {
+			return jwt.MapClaims{
+				identityKey: user,
+			}
+		}
+		return jwt.MapClaims{}
+	}
+}
+
+func identityHandler() func(c *gin.Context) interface{} {
+	return func(c *gin.Context) interface{} {
+		claims := jwt.ExtractClaims(c)
+		return claims[identityKey]
+	}
+}
+
+func authHandler() func(c *gin.Context) (interface{}, error) {
+	return func(c *gin.Context) (interface{}, error) {
+		var user_auth models.Auth
+
+		if err := c.ShouldBindJSON(&user_auth); err != nil {
+			return "", jwt.ErrMissingLoginValues
+		}
+		if err := validator.New().Struct(user_auth); err != nil {
+			return "", jwt.ErrMissingLoginValues
+		}
+
+		existing_user, db_err := services.FindUserByEmail(c, user_auth.Email)
+		if db_err != nil {
+			return "", jwt.ErrFailedAuthentication
+		}
+
+		if err := utils.IsPasswordMatched(user_auth.Password); err != nil {
+			return "", jwt.ErrFailedAuthentication
+		}
+
+		return &models.Identity{
+			Name:   existing_user["name"].(string),
+			Email:  existing_user["email"].(string),
+			Avatar: existing_user["avatar"].(string),
+		}, nil
+	}
 }

@@ -8,49 +8,54 @@ import (
 	"cameron.io/gin-server/services"
 	"cameron.io/gin-server/utils"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/go-playground/validator"
 )
 
-func UserCreate(ctx *gin.Context, new_user models.User) (*mongo.InsertOneResult, error) {
+func UserRoutes(r *gin.Engine) {
+	r.POST("/api/accounts/register", func(ctx *gin.Context) {
+		var new_user models.User
 
-	// Check if user already exists
-	existing_user, err := services.FindUserByEmail(ctx, new_user.Email)
-	if err != nil {
-		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
-		return nil, err
-	}
-	if existing_user != nil {
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"msg": "user already exists"})
-		return nil, err
-	}
+		if err := ctx.ShouldBindJSON(&new_user); err != nil {
+			ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		// Validate the User struct
+		if err := validator.New().Struct(new_user); err != nil {
+			// Validation failed, handle the error
+			ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	// Hash password
-	if new_user.Password, err = utils.HashPassword(new_user.Password); err != nil {
-		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
-		return nil, err
-	}
+		// Check if user already exists
+		existing_user, err := services.FindUserByEmail(ctx, new_user.Email)
+		if err != nil {
+			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
+			return
+		}
+		if existing_user != nil {
+			ctx.IndentedJSON(http.StatusBadRequest, gin.H{"msg": "user already exists"})
+			return
+		}
 
-	// Create new user
-	new_user.CreatedAt = time.Now().UnixMilli()
+		// Hash password
+		if new_user.Password, err = utils.HashPassword(new_user.Password); err != nil {
+			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
+			return
+		}
 
-	return services.CreateUser(ctx, new_user)
-}
+		// Create new user
+		new_user.CreatedAt = time.Now().UnixMilli()
 
-func UserAuth(ctx *gin.Context, user_auth models.Auth) (string, error) {
+		if _, err := services.CreateUser(ctx, new_user); err != nil {
+			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
+			return
+		}
 
-	existing_user, err := services.FindUserByEmail(ctx, user_auth.Email)
-	if err != nil {
-		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
-		return "", err
-	}
-	if existing_user == nil {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"msg": "invalid credentials."})
-		return "", err
-	}
-	is_match := utils.CheckPasswordHash(user_auth.Password)
-	if !is_match {
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"msg": "invalid credentials."})
-		return "", err
-	}
-	return utils.CreateToken(user_auth.Email)
+		created_user, err := services.FindUserByEmail(ctx, new_user.Email)
+		if err != nil {
+			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
+			return
+		}
+		ctx.IndentedJSON(http.StatusCreated, created_user)
+	})
 }
