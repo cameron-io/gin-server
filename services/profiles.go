@@ -17,6 +17,20 @@ var (
 	UpsertMode = true
 )
 
+func GetProfileByUserId(
+	c *gin.Context,
+	userObjId primitive.ObjectID,
+) (bson.M, error) {
+	filter := bson.M{"user": userObjId}
+
+	var result bson.M
+	if err := profileCollection.FindOne(c, filter).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
 func UpsertProfile(
 	c *gin.Context,
 	userObjId primitive.ObjectID,

@@ -9,6 +9,20 @@ import (
 	"github.com/go-playground/validator"
 )
 
+func GetCurrentUserProfile(c *gin.Context) {
+	userId, claimErr := services.GetUserIdFromClaims(c)
+	if claimErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": claimErr.Error()})
+		return
+	}
+	profile, dbErr := services.GetProfileByUserId(c, userId)
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": dbErr.Error()})
+	}
+
+	c.JSON(http.StatusOK, profile)
+}
+
 func UpsertProfile(c *gin.Context) {
 	var newProfile entities.Profile
 
