@@ -26,9 +26,9 @@ func UpsertProfile(
 	options := options.FindOneAndReplaceOptions{Upsert: &UpsertMode}
 
 	var result bson.M
-	if result := profileCollection.FindOneAndReplace(c, filter, profile, &options); result.Err() != nil {
-		if result.Err() != mongo.ErrNoDocuments {
-			return nil, result.Err()
+	if err := profileCollection.FindOneAndReplace(c, filter, profile, &options).Decode(&result); err != nil {
+		if err != mongo.ErrNoDocuments {
+			return nil, err
 		}
 	}
 	return result, nil
