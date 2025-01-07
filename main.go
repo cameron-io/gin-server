@@ -19,13 +19,16 @@ func main() {
 		log.Fatal("JWT Error:" + err.Error())
 	}
 	r.Use(middleware.InitHandlerMiddleware(authHandle))
-	r.POST("/login", authHandle.LoginHandler)
-	rGroupAuth := r.Group("/auth", authHandle.MiddlewareFunc())
+
+	rGroupAcc := r.Group("/api/accounts")
+	rGroupAcc.POST("/register", api.RegisterUser)
+	rGroupAcc.POST("/login", authHandle.LoginHandler)
+
+	// Protected Routes
+	rGroupAuth := rGroupAcc.Group("/", authHandle.MiddlewareFunc())
 	rGroupAuth.GET("/refresh_token", authHandle.RefreshHandler)
 	rGroupAuth.POST("/logout", authHandle.LogoutHandler)
 	rGroupAuth.GET("/test", testHandler)
-
-	api.UserRoutes(r)
 
 	r.SetTrustedProxies(nil)
 	r.Run(os.Getenv("SERVER_URI"))

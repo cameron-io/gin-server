@@ -11,46 +11,44 @@ import (
 	"github.com/go-playground/validator"
 )
 
-func UserRoutes(r *gin.Engine) {
-	r.POST("/api/accounts/register", func(ctx *gin.Context) {
-		var new_user models.User
+func RegisterUser(ctx *gin.Context) {
+	var new_user models.User
 
-		if err := ctx.ShouldBindJSON(&new_user); err != nil {
-			ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		// Validate the User struct
-		if err := validator.New().Struct(new_user); err != nil {
-			// Validation failed, handle the error
-			ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+	if err := ctx.ShouldBindJSON(&new_user); err != nil {
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// Validate the User struct
+	if err := validator.New().Struct(new_user); err != nil {
+		// Validation failed, handle the error
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-		// Check if user already exists
-		existing_user, err := services.FindUserByEmail(ctx, new_user.Email)
-		if err != nil {
-			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
-			return
-		}
-		if existing_user != nil {
-			ctx.IndentedJSON(http.StatusBadRequest, gin.H{"msg": "user already exists"})
-			return
-		}
+	// Check if user already exists
+	existing_user, err := services.FindUserByEmail(ctx, new_user.Email)
+	if err != nil {
+		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_find_error": err.Error()})
+		return
+	}
+	if existing_user != nil {
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"msg": "user already exists"})
+		return
+	}
 
-		// Hash password
-		if new_user.Password, err = utils.HashPassword(new_user.Password); err != nil {
-			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
-			return
-		}
+	// Hash password
+	if new_user.Password, err = utils.HashPassword(new_user.Password); err != nil {
+		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
+		return
+	}
 
-		// Create new user
-		new_user.CreatedAt = time.Now().UnixMilli()
+	// Create new user
+	new_user.CreatedAt = time.Now().UnixMilli()
 
-		if _, err := services.CreateUser(ctx, new_user); err != nil {
-			ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
-			return
-		}
+	if _, err := services.CreateUser(ctx, new_user); err != nil {
+		ctx.IndentedJSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
+		return
+	}
 
-		ctx.Status(201)
-	})
+	ctx.Status(201)
 }
