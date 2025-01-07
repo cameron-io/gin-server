@@ -31,16 +31,8 @@ func main() {
 	rGroupAuth := rGroupAcc.Group("/", authHandle.MiddlewareFunc())
 	rGroupAuth.GET("/refresh_token", authHandle.RefreshHandler)
 	rGroupAuth.POST("/logout", authHandle.LogoutHandler)
-	rGroupAuth.GET("/test", testHandler)
+	rGroupAuth.GET("/info", api.GetUserInfo)
 
 	r.SetTrustedProxies(nil)
 	r.Run(os.Getenv("SERVER_URI"))
-}
-
-func testHandler(c *gin.Context) {
-	claims := jwt.ExtractClaims(c)
-	// user, _ := c.Get("identity")
-	c.JSON(200, gin.H{
-		"claims": claims,
-	})
 }
