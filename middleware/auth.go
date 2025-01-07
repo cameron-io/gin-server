@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"cameron.io/gin-server/models"
+	"cameron.io/gin-server/dto"
 	"cameron.io/gin-server/services"
 	"cameron.io/gin-server/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -54,7 +54,7 @@ func InitHandlerMiddleware(authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc
 
 func payloadFunc() func(data interface{}) jwt.MapClaims {
 	return func(data interface{}) jwt.MapClaims {
-		if user, ok := data.(*models.Identity); ok {
+		if user, ok := data.(*dto.Identity); ok {
 			return jwt.MapClaims{
 				identityKey: user,
 			}
@@ -72,7 +72,7 @@ func identityHandler() func(c *gin.Context) interface{} {
 
 func authHandler() func(c *gin.Context) (interface{}, error) {
 	return func(c *gin.Context) (interface{}, error) {
-		var user_auth models.Auth
+		var user_auth dto.Auth
 
 		if err := c.ShouldBindJSON(&user_auth); err != nil {
 			return "", jwt.ErrMissingLoginValues
@@ -93,7 +93,7 @@ func authHandler() func(c *gin.Context) (interface{}, error) {
 			return "", err
 		}
 
-		return &models.Identity{
+		return &dto.Identity{
 			Id:     existing_user["_id"].(primitive.ObjectID).Hex(),
 			Name:   existing_user["name"].(string),
 			Email:  existing_user["email"].(string),

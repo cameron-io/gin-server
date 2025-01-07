@@ -5,7 +5,7 @@ import (
 
 	"cameron.io/gin-server/config"
 	"cameron.io/gin-server/db"
-	"cameron.io/gin-server/models"
+	"cameron.io/gin-server/entities"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -28,7 +28,7 @@ func FindUserByEmail(c *gin.Context, email string) (bson.M, error) {
 	return result, nil
 }
 
-func CreateUser(c *gin.Context, new_user models.User) (*mongo.InsertOneResult, error) {
+func CreateUser(c *gin.Context, new_user entities.User) (*mongo.InsertOneResult, error) {
 	return userCollection.InsertOne(context.TODO(), new_user)
 }
 

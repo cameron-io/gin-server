@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"cameron.io/gin-server/models"
+	"cameron.io/gin-server/entities"
 	"cameron.io/gin-server/services"
 	"cameron.io/gin-server/utils"
 	"github.com/gin-gonic/gin"
@@ -17,7 +17,7 @@ func GetUserInfo(c *gin.Context) {
 }
 
 func RegisterUser(c *gin.Context) {
-	var new_user models.User
+	var new_user entities.User
 
 	if err := c.ShouldBindJSON(&new_user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -1,4 +1,4 @@
-package models
+package dto
 
 type Auth struct {
 	Email    string `json:"email"    validate:"required,email"`

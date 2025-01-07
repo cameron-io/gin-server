@@ -1,4 +1,4 @@
-package models
+package dto
 
 type Identity struct {
 	Id     string `json:"id"`

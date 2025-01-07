@@ -3,7 +3,7 @@ package services
 import (
 	"cameron.io/gin-server/config"
 	"cameron.io/gin-server/db"
-	"cameron.io/gin-server/models"
+	"cameron.io/gin-server/entities"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -20,7 +20,7 @@ var (
 func UpsertProfile(
 	c *gin.Context,
 	user_obj_id primitive.ObjectID,
-	profile models.Profile,
+	profile entities.Profile,
 ) (bson.M, error) {
 	filter := bson.M{"user": user_obj_id}
 	options := options.FindOneAndReplaceOptions{Upsert: &UpsertMode}

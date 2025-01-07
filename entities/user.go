@@ -1,4 +1,4 @@
-package models
+package entities
 
 type User struct {
 	Name      string `json:"name"     validate:"min=3,max=50"`

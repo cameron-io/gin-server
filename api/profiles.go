@@ -3,14 +3,14 @@ package api
 import (
 	"net/http"
 
-	"cameron.io/gin-server/models"
+	"cameron.io/gin-server/entities"
 	"cameron.io/gin-server/services"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
 
 func UpsertProfile(c *gin.Context) {
-	var new_profile models.Profile
+	var new_profile entities.Profile
 
 	if err := c.ShouldBindJSON(&new_profile); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
