@@ -94,7 +94,7 @@ func authHandler() func(c *gin.Context) (interface{}, error) {
 		}
 
 		return &models.Identity{
-			Id:     existing_user["_id"].(primitive.ObjectID).String(),
+			Id:     existing_user["_id"].(primitive.ObjectID).Hex(),
 			Name:   existing_user["name"].(string),
 			Email:  existing_user["email"].(string),
 			Avatar: existing_user["avatar"].(string),
