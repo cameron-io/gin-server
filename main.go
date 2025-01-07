@@ -34,6 +34,10 @@ func main() {
 	rGroupAuth.GET("/info", api.GetUserInfo)
 	rGroupAuth.DELETE("/", api.DeleteUser)
 
+	// Profiles - Protected Routes
+	rGroupProfile := rGroupApi.Group("/profiles", authHandle.MiddlewareFunc())
+	rGroupProfile.POST("/", api.UpsertProfile)
+
 	r.SetTrustedProxies(nil)
 	r.Run(os.Getenv("SERVER_URI"))
 }
