@@ -7,7 +7,6 @@ import (
 	"cameron.io/gin-server/services"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func UpsertProfile(c *gin.Context) {
@@ -24,17 +23,14 @@ func UpsertProfile(c *gin.Context) {
 		return
 	}
 
-	user, _ := c.Get("identity")
-	user_id := user.(map[string]interface{})["id"].(string)
-
-	user_obj_id, conv_err := primitive.ObjectIDFromHex(user_id)
+	user_id, conv_err := services.GetUserIdFromClaims(c)
 	if conv_err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"conv_error": conv_err.Error()})
 		return
 	}
-	new_profile.User = user_obj_id
+	new_profile.User = user_id
 
-	profile, err := services.UpsertProfile(c, user_obj_id, new_profile)
+	profile, err := services.UpsertProfile(c, user_id, new_profile)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"db_upsert_error": err.Error()})
 		return
