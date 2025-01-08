@@ -3,16 +3,15 @@ package services
 import (
 	"context"
 
-	"cameron.io/gin-server/config"
-	"cameron.io/gin-server/db"
-	"cameron.io/gin-server/entities"
+	"cameron.io/gin-server/domain/entities"
+	"cameron.io/gin-server/infra/db"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var userCollection *mongo.Collection = db.GetCollection(config.MongoConnection, "user")
+var userCollection *mongo.Collection = db.GetDbCollection("user")
 
 func FindUserByEmail(c *gin.Context, email string) (bson.M, error) {
 	filter := bson.M{

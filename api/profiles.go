@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"cameron.io/gin-server/entities"
+	"cameron.io/gin-server/domain/entities"
 	"cameron.io/gin-server/services"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"

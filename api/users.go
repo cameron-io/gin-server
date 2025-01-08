@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"cameron.io/gin-server/entities"
+	"cameron.io/gin-server/domain/entities"
 	"cameron.io/gin-server/services"
 	"cameron.io/gin-server/utils"
 	"github.com/gin-gonic/gin"

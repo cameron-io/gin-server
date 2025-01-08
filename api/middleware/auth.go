@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"cameron.io/gin-server/dto"
+	"cameron.io/gin-server/api/dto"
 	"cameron.io/gin-server/services"
 	"cameron.io/gin-server/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"

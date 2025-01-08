@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"cameron.io/gin-server/api"
-	"cameron.io/gin-server/middleware"
+	"cameron.io/gin-server/api/middleware"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )

@@ -1,9 +1,8 @@
 package services
 
 import (
-	"cameron.io/gin-server/config"
-	"cameron.io/gin-server/db"
-	"cameron.io/gin-server/entities"
+	"cameron.io/gin-server/domain/entities"
+	"cameron.io/gin-server/infra/db"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -11,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var profileCollection *mongo.Collection = db.GetCollection(config.MongoConnection, "profile")
+var profileCollection *mongo.Collection = db.GetDbCollection("profile")
 
 func GetProfileByUserId(
 	c *gin.Context,
