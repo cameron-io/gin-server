@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
+	"cameron.io/gin-server/application/services"
+	"cameron.io/gin-server/application/utils"
 	"cameron.io/gin-server/domain/entities"
-	"cameron.io/gin-server/services"
-	"cameron.io/gin-server/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )

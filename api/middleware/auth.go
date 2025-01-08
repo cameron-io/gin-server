@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"cameron.io/gin-server/api/dto"
-	"cameron.io/gin-server/services"
-	"cameron.io/gin-server/utils"
+	"cameron.io/gin-server/application/services"
+	"cameron.io/gin-server/application/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
