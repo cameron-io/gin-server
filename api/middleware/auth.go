@@ -7,19 +7,16 @@ import (
 	"time"
 
 	"cameron.io/gin-server/api/dto"
-	"cameron.io/gin-server/application/services"
-	"cameron.io/gin-server/application/utils"
+	"cameron.io/gin-server/domain/interfaces"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
 	identityKey = "identity"
 )
 
-func InitParams() *jwt.GinJWTMiddleware {
+func InitParams(service interfaces.AuthService) *jwt.GinJWTMiddleware {
 	return &jwt.GinJWTMiddleware{
 		Realm:       os.Getenv("SERVER_NAME") + "_user",
 		Key:         []byte(os.Getenv("JWT_SECRET")),
@@ -29,7 +26,7 @@ func InitParams() *jwt.GinJWTMiddleware {
 		PayloadFunc: payloadFunc(),
 
 		IdentityHandler: identityHandler(),
-		Authenticator:   authHandler(),
+		Authenticator:   service.Authenticator(),
 
 		SendCookie:     true,
 		SecureCookie:   os.Getenv("SERVER_ENV") == "production",
@@ -52,6 +49,11 @@ func InitHandlerMiddleware(authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc
 	}
 }
 
+func GetUserIdFromClaims(c *gin.Context) string {
+	user, _ := c.Get("identity")
+	return user.(map[string]interface{})["id"].(string)
+}
+
 func payloadFunc() func(data interface{}) jwt.MapClaims {
 	return func(data interface{}) jwt.MapClaims {
 		if user, ok := data.(*dto.Identity); ok {
@@ -67,37 +69,5 @@ func identityHandler() func(c *gin.Context) interface{} {
 	return func(c *gin.Context) interface{} {
 		claims := jwt.ExtractClaims(c)
 		return claims[identityKey]
-	}
-}
-
-func authHandler() func(c *gin.Context) (interface{}, error) {
-	return func(c *gin.Context) (interface{}, error) {
-		var userLogin dto.Login
-
-		if err := c.ShouldBindJSON(&userLogin); err != nil {
-			return "", jwt.ErrMissingLoginValues
-		}
-		if err := validator.New().Struct(userLogin); err != nil {
-			return "", jwt.ErrMissingLoginValues
-		}
-
-		existingUser, dbErr := services.FindUserByEmail(c, userLogin.Email)
-		if dbErr != nil {
-			return "", jwt.ErrFailedAuthentication
-		}
-
-		if err := utils.MatchPasswords(
-			userLogin.Password,
-			existingUser["password"].(string),
-		); err != nil {
-			return "", err
-		}
-
-		return &dto.Identity{
-			Id:     existingUser["_id"].(primitive.ObjectID).Hex(),
-			Name:   existingUser["name"].(string),
-			Email:  existingUser["email"].(string),
-			Avatar: existingUser["avatar"].(string),
-		}, nil
 	}
 }

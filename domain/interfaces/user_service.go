@@ -1,4 +1,4 @@
-package repositories
+package interfaces
 
 import (
 	"cameron.io/gin-server/domain/entities"
@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type UserRepository interface {
+type UserService interface {
 	FindUserByEmail(c *gin.Context, email string) (bson.M, error)
 	CreateUser(c *gin.Context, new_user entities.User) (*mongo.InsertOneResult, error)
 	DeleteUserByID(c *gin.Context, userId string) (bool, error)

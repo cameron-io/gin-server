@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cameron.io/gin-server/domain/entities"
+	"cameron.io/gin-server/domain/interfaces"
 	"cameron.io/gin-server/infra/db"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +14,13 @@ import (
 
 var userCollection *mongo.Collection = db.GetDbCollection("user")
 
-func FindUserByEmail(c *gin.Context, email string) (bson.M, error) {
+type UserService struct{}
+
+func NewUserService() interfaces.UserService {
+	return &UserService{}
+}
+
+func (s *UserService) FindUserByEmail(c *gin.Context, email string) (bson.M, error) {
 	filter := bson.M{
 		"email": email,
 	}
@@ -27,11 +34,11 @@ func FindUserByEmail(c *gin.Context, email string) (bson.M, error) {
 	return result, nil
 }
 
-func CreateUser(c *gin.Context, new_user entities.User) (*mongo.InsertOneResult, error) {
+func (s *UserService) CreateUser(c *gin.Context, new_user entities.User) (*mongo.InsertOneResult, error) {
 	return userCollection.InsertOne(context.TODO(), new_user)
 }
 
-func DeleteUserByID(c *gin.Context, userId string) (bool, error) {
+func (s *UserService) DeleteUserByID(c *gin.Context, userId string) (bool, error) {
 	id, conv_err := primitive.ObjectIDFromHex(userId)
 	if conv_err != nil {
 		return false, conv_err

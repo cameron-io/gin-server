@@ -2,6 +2,7 @@ package services
 
 import (
 	"cameron.io/gin-server/domain/entities"
+	"cameron.io/gin-server/domain/interfaces"
 	"cameron.io/gin-server/infra/db"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,7 +13,13 @@ import (
 
 var profileCollection *mongo.Collection = db.GetDbCollection("profile")
 
-func GetProfileByUserId(
+type ProfileService struct{}
+
+func NewProfileService() interfaces.ProfileService {
+	return &ProfileService{}
+}
+
+func (s *ProfileService) GetProfileByUserId(
 	c *gin.Context,
 	userId string,
 ) (bson.M, error) {
@@ -30,7 +37,7 @@ func GetProfileByUserId(
 	return result, nil
 }
 
-func GetAllProfiles(c *gin.Context) ([]bson.M, error) {
+func (s *ProfileService) GetAllProfiles(c *gin.Context) ([]bson.M, error) {
 	var results []bson.M
 
 	findOptions := options.Find()
@@ -54,7 +61,7 @@ func GetAllProfiles(c *gin.Context) ([]bson.M, error) {
 	return results, nil
 }
 
-func UpsertProfile(
+func (s *ProfileService) UpsertProfile(
 	c *gin.Context,
 	userId string,
 	profile entities.Profile,
