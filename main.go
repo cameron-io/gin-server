@@ -37,6 +37,7 @@ func main() {
 	// Profiles - Protected Routes
 	rGroupProfile := rGroupApi.Group("/profiles", authHandle.MiddlewareFunc())
 	rGroupProfile.POST("/", api.UpsertProfile)
+	rGroupProfile.GET("/", api.GetAllProfiles)
 	rGroupProfile.GET("/me", api.GetCurrentUserProfile)
 
 	r.SetTrustedProxies(nil)

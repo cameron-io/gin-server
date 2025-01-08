@@ -52,3 +52,12 @@ func UpsertProfile(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, profile)
 }
+
+func GetAllProfiles(c *gin.Context) {
+	profiles, err := services.GetAllProfiles(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"db_all_profiles_error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, profiles)
+}
