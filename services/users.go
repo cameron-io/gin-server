@@ -32,14 +32,17 @@ func CreateUser(c *gin.Context, new_user entities.User) (*mongo.InsertOneResult,
 	return userCollection.InsertOne(context.TODO(), new_user)
 }
 
-func DeleteUserByID(c *gin.Context, id primitive.ObjectID) (bool, error) {
-	ctx := context.TODO()
-	if err := profileCollection.FindOneAndDelete(ctx, bson.M{"user": id}).Err(); err != nil {
+func DeleteUserByID(c *gin.Context, userId string) (bool, error) {
+	id, conv_err := primitive.ObjectIDFromHex(userId)
+	if conv_err != nil {
+		return false, conv_err
+	}
+	if err := profileCollection.FindOneAndDelete(c, bson.M{"user": id}).Err(); err != nil {
 		if err != mongo.ErrNoDocuments {
 			return false, err
 		}
 	}
-	if err := userCollection.FindOneAndDelete(ctx, bson.M{"_id": id}).Err(); err != nil {
+	if err := userCollection.FindOneAndDelete(c, bson.M{"_id": id}).Err(); err != nil {
 		if err != mongo.ErrNoDocuments {
 			return false, err
 		}

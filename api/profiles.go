@@ -10,11 +10,19 @@ import (
 )
 
 func GetCurrentUserProfile(c *gin.Context) {
-	userId, claimErr := services.GetUserIdFromClaims(c)
-	if claimErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": claimErr.Error()})
-		return
+	userId := services.GetUserIdFromClaims(c)
+
+	profile, dbErr := services.GetProfileByUserId(c, userId)
+	if dbErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": dbErr.Error()})
 	}
+
+	c.JSON(http.StatusOK, profile)
+}
+
+func GetProfileByUserId(c *gin.Context) {
+	userId := c.Param("user_id")
+
 	profile, dbErr := services.GetProfileByUserId(c, userId)
 	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": dbErr.Error()})
@@ -37,12 +45,7 @@ func UpsertProfile(c *gin.Context) {
 		return
 	}
 
-	userId, convErr := services.GetUserIdFromClaims(c)
-	if convErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"conv_error": convErr.Error()})
-		return
-	}
-	newProfile.User = userId
+	userId := services.GetUserIdFromClaims(c)
 
 	profile, err := services.UpsertProfile(c, userId, newProfile)
 	if err != nil {

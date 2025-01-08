@@ -59,11 +59,7 @@ func RegisterUser(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
-	userId, claimsErr := services.GetUserIdFromClaims(c)
-	if claimsErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": claimsErr.Error()})
-		return
-	}
+	userId := services.GetUserIdFromClaims(c)
 
 	res, err := services.DeleteUserByID(c, userId)
 	if err != nil {

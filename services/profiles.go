@@ -15,9 +15,13 @@ var profileCollection *mongo.Collection = db.GetCollection(config.MongoConnectio
 
 func GetProfileByUserId(
 	c *gin.Context,
-	userObjId primitive.ObjectID,
+	userId string,
 ) (bson.M, error) {
-	filter := bson.M{"user": userObjId}
+	id, conv_err := primitive.ObjectIDFromHex(userId)
+	if conv_err != nil {
+		return nil, conv_err
+	}
+	filter := bson.M{"user": id}
 
 	var result bson.M
 	if err := profileCollection.FindOne(c, filter).Decode(&result); err != nil {
@@ -53,10 +57,17 @@ func GetAllProfiles(c *gin.Context) ([]bson.M, error) {
 
 func UpsertProfile(
 	c *gin.Context,
-	userObjId primitive.ObjectID,
+	userId string,
 	profile entities.Profile,
 ) (bson.M, error) {
-	filter := bson.M{"user": userObjId}
+	id, conv_err := primitive.ObjectIDFromHex(userId)
+	if conv_err != nil {
+		return nil, conv_err
+	}
+
+	profile.User = id
+
+	filter := bson.M{"user": id}
 	options := options.FindOneAndReplace()
 	options.SetUpsert(true)
 

@@ -39,6 +39,7 @@ func main() {
 	rGroupProfile.POST("/", api.UpsertProfile)
 	rGroupProfile.GET("/", api.GetAllProfiles)
 	rGroupProfile.GET("/me", api.GetCurrentUserProfile)
+	rGroupProfile.GET("/user/:user_id", api.GetProfileByUserId)
 
 	r.SetTrustedProxies(nil)
 	r.Run(os.Getenv("SERVER_URI"))
