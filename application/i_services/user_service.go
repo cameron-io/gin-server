@@ -1,8 +1,8 @@
 package i_services
 
 import (
-	"cameron.io/gin-server/domain/data"
 	"cameron.io/gin-server/domain/entities"
+	"cameron.io/gin-server/infra/data"
 	"github.com/gin-gonic/gin"
 )
 

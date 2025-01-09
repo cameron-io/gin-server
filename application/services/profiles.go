@@ -2,12 +2,11 @@ package services
 
 import (
 	"cameron.io/gin-server/application/i_services"
-	"cameron.io/gin-server/domain/data"
 	"cameron.io/gin-server/domain/entities"
 	"cameron.io/gin-server/domain/i_repositories"
+	"cameron.io/gin-server/infra/data"
 	"cameron.io/gin-server/infra/db/mongo/repositories"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ProfileService struct {
@@ -55,7 +54,7 @@ func (s *ProfileService) UpsertProfile(
 	if err != nil {
 		return nil, err
 	}
-	profile.User = id.(primitive.ObjectID)
+	profile.User = id
 	filter := map[string]any{"user": userId}
 	return s.repository.Upsert(c, filter, profile)
 }

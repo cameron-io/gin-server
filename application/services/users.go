@@ -2,13 +2,11 @@ package services
 
 import (
 	"cameron.io/gin-server/application/i_services"
-	"cameron.io/gin-server/domain/data"
 	"cameron.io/gin-server/domain/entities"
 	"cameron.io/gin-server/domain/i_repositories"
+	"cameron.io/gin-server/infra/data"
 	"cameron.io/gin-server/infra/db/mongo/repositories"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserService struct {
@@ -24,7 +22,7 @@ func NewUserService() i_services.UserService {
 }
 
 func (s *UserService) FindUserByEmail(c *gin.Context, email string) (data.Obj, error) {
-	filter := bson.M{
+	filter := map[string]any{
 		"email": email,
 	}
 	result, err := s.userRepository.Find(c, filter)
@@ -39,7 +37,7 @@ func (s *UserService) CreateUser(c *gin.Context, new_user entities.User) error {
 }
 
 func (s *UserService) DeleteUserByID(c *gin.Context, userId string) (bool, error) {
-	id, conv_err := primitive.ObjectIDFromHex(userId)
+	id, conv_err := data.ConvToUuid(userId)
 	if conv_err != nil {
 		return false, conv_err
 	}
