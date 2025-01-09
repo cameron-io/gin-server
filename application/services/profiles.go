@@ -1,9 +1,9 @@
 package services
 
 import (
+	"cameron.io/gin-server/application/interfaces"
 	"cameron.io/gin-server/domain/entities"
-	"cameron.io/gin-server/domain/interfaces"
-	"cameron.io/gin-server/infra/db"
+	db "cameron.io/gin-server/infra/db/mongo"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// TODO: Move to repository, add as dependency
 var profileCollection *mongo.Collection = db.GetDbCollection("profile")
 
 type ProfileService struct{}

@@ -2,8 +2,8 @@ package services
 
 import (
 	"cameron.io/gin-server/api/dto"
+	"cameron.io/gin-server/application/interfaces"
 	"cameron.io/gin-server/application/utils"
-	"cameron.io/gin-server/domain/interfaces"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"

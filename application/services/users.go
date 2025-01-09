@@ -1,11 +1,9 @@
 package services
 
 import (
-	"context"
-
+	"cameron.io/gin-server/application/interfaces"
 	"cameron.io/gin-server/domain/entities"
-	"cameron.io/gin-server/domain/interfaces"
-	"cameron.io/gin-server/infra/db"
+	db "cameron.io/gin-server/infra/db/mongo"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -35,7 +33,7 @@ func (s *UserService) FindUserByEmail(c *gin.Context, email string) (bson.M, err
 }
 
 func (s *UserService) CreateUser(c *gin.Context, new_user entities.User) (*mongo.InsertOneResult, error) {
-	return userCollection.InsertOne(context.TODO(), new_user)
+	return userCollection.InsertOne(c, new_user)
 }
 
 func (s *UserService) DeleteUserByID(c *gin.Context, userId string) (bool, error) {
