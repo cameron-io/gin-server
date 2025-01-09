@@ -21,8 +21,12 @@ func NewGenRepository(table string) i_repositories.GenRepository {
 }
 
 func (gr *GenRepository) Insert(c *gin.Context, entity interface{}) error {
-	_, err := gr.collection.InsertOne(c, entity)
-	return err
+	if _, err := gr.collection.InsertOne(c, entity); err != nil {
+		if err != mongo.ErrNoDocuments {
+			return err
+		}
+	}
+	return nil
 }
 
 func (gr *GenRepository) Upsert(
@@ -69,6 +73,9 @@ func (gr *GenRepository) FindById(c *gin.Context, id uuid.UUID) (data.Obj, error
 	filter := bson.M{"_id": id}
 	var result data.Obj
 	if err := gr.collection.FindOne(c, filter).Decode(&result); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -80,6 +87,9 @@ func (gr *GenRepository) Find(
 	filter map[string]interface{}) (data.Obj, error) {
 	var result data.Obj
 	if err := gr.collection.FindOne(c, filter).Decode(&result); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return result, nil

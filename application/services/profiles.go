@@ -7,6 +7,7 @@ import (
 	"cameron.io/gin-server/domain/i_repositories"
 	"cameron.io/gin-server/infra/db/mongo/repositories"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ProfileService struct {
@@ -23,8 +24,12 @@ func (s *ProfileService) GetProfileByUserId(
 	c *gin.Context,
 	userId string,
 ) (data.Obj, error) {
+	uuid, conv_err := data.ConvToUuid(userId)
+	if conv_err != nil {
+		return nil, conv_err
+	}
 	filter := map[string]any{
-		"user": userId,
+		"user": uuid,
 	}
 	result, err := s.repository.Find(c, filter)
 	if err != nil {
@@ -50,7 +55,7 @@ func (s *ProfileService) UpsertProfile(
 	if err != nil {
 		return nil, err
 	}
-	profile.User = id
+	profile.User = id.(primitive.ObjectID)
 	filter := map[string]any{"user": userId}
 	return s.repository.Upsert(c, filter, profile)
 }
