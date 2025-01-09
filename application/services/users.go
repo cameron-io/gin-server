@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// TODO: Move to repository, add as dependency
 var userCollection *mongo.Collection = db.GetDbCollection("user")
 
 type UserService struct{}
