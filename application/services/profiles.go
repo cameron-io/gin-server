@@ -1,64 +1,43 @@
 package services
 
 import (
-	"cameron.io/gin-server/application/interfaces"
+	"cameron.io/gin-server/application/i_services"
+	"cameron.io/gin-server/domain/data"
 	"cameron.io/gin-server/domain/entities"
-	db "cameron.io/gin-server/infra/db/mongo"
+	"cameron.io/gin-server/domain/i_repositories"
+	"cameron.io/gin-server/infra/db/mongo/repositories"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// TODO: Move to repository, add as dependency
-var profileCollection *mongo.Collection = db.GetDbCollection("profile")
+type ProfileService struct {
+	repository i_repositories.GenRepository
+}
 
-type ProfileService struct{}
-
-func NewProfileService() interfaces.ProfileService {
-	return &ProfileService{}
+func NewProfileService() i_services.ProfileService {
+	return &ProfileService{
+		repository: repositories.NewGenRepository("profile"),
+	}
 }
 
 func (s *ProfileService) GetProfileByUserId(
 	c *gin.Context,
 	userId string,
-) (bson.M, error) {
-	id, conv_err := primitive.ObjectIDFromHex(userId)
-	if conv_err != nil {
-		return nil, conv_err
+) (data.Obj, error) {
+	filter := map[string]any{
+		"user": userId,
 	}
-	filter := bson.M{"user": id}
-
-	var result bson.M
-	if err := profileCollection.FindOne(c, filter).Decode(&result); err != nil {
-		return nil, err
-	}
-
-	return result, nil
-}
-
-func (s *ProfileService) GetAllProfiles(c *gin.Context) ([]bson.M, error) {
-	var results []bson.M
-
-	findOptions := options.Find()
-	findOptions.SetLimit(10)
-
-	cur, err := profileCollection.Find(c, bson.D{}, findOptions)
+	result, err := s.repository.Find(c, filter)
 	if err != nil {
 		return nil, err
 	}
-	for cur.Next(c) {
-		var doc bson.M
-		if err := cur.Decode(&doc); err != nil {
-			return nil, err
-		}
-		results = append(results, doc)
-	}
-	if err := cur.Err(); err != nil {
+	return result, nil
+}
+
+func (s *ProfileService) GetAllProfiles(c *gin.Context) ([]data.Obj, error) {
+	results, err := s.repository.FindAll(c, 10)
+	if err != nil {
 		return nil, err
 	}
-
 	return results, nil
 }
 
@@ -66,23 +45,12 @@ func (s *ProfileService) UpsertProfile(
 	c *gin.Context,
 	userId string,
 	profile entities.Profile,
-) (bson.M, error) {
-	id, conv_err := primitive.ObjectIDFromHex(userId)
-	if conv_err != nil {
-		return nil, conv_err
+) (data.Obj, error) {
+	id, err := data.ConvToUuid(userId)
+	if err != nil {
+		return nil, err
 	}
-
 	profile.User = id
-
-	filter := bson.M{"user": id}
-	options := options.FindOneAndReplace()
-	options.SetUpsert(true)
-
-	var result bson.M
-	if err := profileCollection.FindOneAndReplace(c, filter, profile, options).Decode(&result); err != nil {
-		if err != mongo.ErrNoDocuments {
-			return nil, err
-		}
-	}
-	return result, nil
+	filter := map[string]any{"user": userId}
+	return s.repository.Upsert(c, filter, profile)
 }

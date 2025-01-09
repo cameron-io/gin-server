@@ -2,7 +2,7 @@ package services
 
 import (
 	"cameron.io/gin-server/api/dto"
-	"cameron.io/gin-server/application/interfaces"
+	"cameron.io/gin-server/application/i_services"
 	"cameron.io/gin-server/application/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -11,10 +11,10 @@ import (
 )
 
 type AuthService struct {
-	service interfaces.UserService
+	service i_services.UserService
 }
 
-func NewAuthService(service interfaces.UserService) *AuthService {
+func NewAuthService(service i_services.UserService) *AuthService {
 	return &AuthService{
 		service: service,
 	}

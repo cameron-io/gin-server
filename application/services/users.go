@@ -1,40 +1,41 @@
 package services
 
 import (
-	"cameron.io/gin-server/application/interfaces"
+	"cameron.io/gin-server/application/i_services"
+	"cameron.io/gin-server/domain/data"
 	"cameron.io/gin-server/domain/entities"
-	db "cameron.io/gin-server/infra/db/mongo"
+	"cameron.io/gin-server/domain/i_repositories"
+	"cameron.io/gin-server/infra/db/mongo/repositories"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// TODO: Move to repository, add as dependency
-var userCollection *mongo.Collection = db.GetDbCollection("user")
-
-type UserService struct{}
-
-func NewUserService() interfaces.UserService {
-	return &UserService{}
+type UserService struct {
+	userRepository    i_repositories.GenRepository
+	profileRepository i_repositories.GenRepository
 }
 
-func (s *UserService) FindUserByEmail(c *gin.Context, email string) (bson.M, error) {
+func NewUserService() i_services.UserService {
+	return &UserService{
+		userRepository:    repositories.NewGenRepository("user"),
+		profileRepository: repositories.NewGenRepository("profile"),
+	}
+}
+
+func (s *UserService) FindUserByEmail(c *gin.Context, email string) (data.Obj, error) {
 	filter := bson.M{
 		"email": email,
 	}
-	var result bson.M
-	if err := userCollection.FindOne(c, filter).Decode(&result); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, nil
-		}
+	result, err := s.userRepository.Find(c, filter)
+	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (s *UserService) CreateUser(c *gin.Context, new_user entities.User) (*mongo.InsertOneResult, error) {
-	return userCollection.InsertOne(c, new_user)
+func (s *UserService) CreateUser(c *gin.Context, new_user entities.User) error {
+	return s.userRepository.Insert(c, new_user)
 }
 
 func (s *UserService) DeleteUserByID(c *gin.Context, userId string) (bool, error) {
@@ -42,16 +43,13 @@ func (s *UserService) DeleteUserByID(c *gin.Context, userId string) (bool, error
 	if conv_err != nil {
 		return false, conv_err
 	}
-	if err := profileCollection.FindOneAndDelete(c, bson.M{"user": id}).Err(); err != nil {
-		if err != mongo.ErrNoDocuments {
-			return false, err
-		}
+	profileFilter := map[string]any{"user": id}
+	if _, err := s.profileRepository.Delete(c, profileFilter); err != nil {
+		return false, err
 	}
-	if err := userCollection.FindOneAndDelete(c, bson.M{"_id": id}).Err(); err != nil {
-		if err != mongo.ErrNoDocuments {
-			return false, err
-		}
-		return false, nil
+	userFilter := map[string]any{"_id": id}
+	if _, err := s.userRepository.Delete(c, userFilter); err != nil {
+		return false, err
 	}
 	return true, nil
 }

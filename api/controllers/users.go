@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"cameron.io/gin-server/api/middleware"
-	"cameron.io/gin-server/application/interfaces"
+	"cameron.io/gin-server/application/i_services"
 	"cameron.io/gin-server/application/utils"
 	"cameron.io/gin-server/domain/entities"
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -14,13 +14,13 @@ import (
 )
 
 type UserController struct {
-	service interfaces.UserService
+	service i_services.UserService
 }
 
 func NewUserController(
 	r *gin.RouterGroup,
 	authHandle *jwt.GinJWTMiddleware,
-	service interfaces.UserService,
+	service i_services.UserService,
 ) {
 	controller := &UserController{
 		service: service,
@@ -77,7 +77,7 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 	// Create new user
 	newUser.CreatedAt = time.Now().UnixMilli()
 
-	if _, err := uc.service.CreateUser(ctx, newUser); err != nil {
+	if err := uc.service.CreateUser(ctx, newUser); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
 		return
 	}

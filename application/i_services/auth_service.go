@@ -1,4 +1,4 @@
-package interfaces
+package i_services
 
 import "github.com/gin-gonic/gin"
 
