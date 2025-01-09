@@ -36,6 +36,7 @@ func (pc *ProfileController) GetCurrentUserProfile(ctx *gin.Context) {
 	profile, dbErr := pc.service.GetProfileByUserId(ctx, userId)
 	if dbErr != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": dbErr.Error()})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, profile)
@@ -47,6 +48,7 @@ func (pc *ProfileController) GetProfileByUserId(ctx *gin.Context) {
 	profile, dbErr := pc.service.GetProfileByUserId(ctx, userId)
 	if dbErr != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": dbErr.Error()})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, profile)
