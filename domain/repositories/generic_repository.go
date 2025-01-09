@@ -6,9 +6,10 @@ import (
 )
 
 type GenericRepository interface {
-	Upsert(c *gin.Context, entity interface{})
-	FindById(c *gin.Context, id uuid.UUID)
-	Find(c *gin.Context, filter any)
-	FindAll(c *gin.Context)
-	Delete(c *gin.Context, id uuid.UUID)
+	Insert(c *gin.Context, entity interface{}) error
+	Upsert(c *gin.Context, entity interface{}) error
+	FindById(c *gin.Context, id uuid.UUID) (interface{}, error)
+	Find(c *gin.Context, filter any) (interface{}, error)
+	FindAll(c *gin.Context) (interface{}, error)
+	Delete(c *gin.Context, id uuid.UUID) error
 }
