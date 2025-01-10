@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	"cameron.io/gin-server/infra/data"
+	"cameron.io/gin-server/domain/utils/data"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
