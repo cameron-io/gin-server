@@ -2,7 +2,6 @@ package entities
 
 import (
 	"github.com/google/uuid"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Profile struct {
@@ -16,5 +15,5 @@ type Profile struct {
 	GitHubUsername string    `json:"githubusername"`
 	Experience     []Experience
 	Education      []Education
-	Date           primitive.DateTime `json:"date"`
+	Date           int64 `json:"date"`
 }
