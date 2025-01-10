@@ -8,6 +8,7 @@ import (
 	"cameron.io/gin-server/api/controllers"
 	"cameron.io/gin-server/api/middleware"
 	"cameron.io/gin-server/domain/services"
+	"cameron.io/gin-server/infra/db/mongo/repositories"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,10 @@ func main() {
 	rGroupApi := r.Group("/api")
 
 	// Accounts - services
-	userService := services.NewUserService()
+	userRepository := repositories.NewGenRepository("user")
+	profileRepository := repositories.NewGenRepository("profile")
+
+	userService := services.NewUserService(userRepository, profileRepository)
 	authService := services.NewAuthService(userService)
 
 	// Accounts - middleware
@@ -42,7 +46,7 @@ func main() {
 	controllers.NewUserController(rGroupApi, authHandle, userService)
 
 	// Profiles
-	profileService := services.NewProfileService()
+	profileService := services.NewProfileService(profileRepository)
 	controllers.NewProfileController(rGroupApi, authHandle, profileService)
 
 	r.SetTrustedProxies(nil)

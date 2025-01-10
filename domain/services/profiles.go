@@ -4,7 +4,6 @@ import (
 	"cameron.io/gin-server/domain/entities"
 	"cameron.io/gin-server/domain/interfaces"
 	"cameron.io/gin-server/infra/data"
-	"cameron.io/gin-server/infra/db/mongo/repositories"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,10 +11,9 @@ type ProfileService struct {
 	repository interfaces.GenRepository
 }
 
-// TODO: Inject repository from main
-func NewProfileService() interfaces.ProfileService {
+func NewProfileService(profileRepo interfaces.GenRepository) interfaces.ProfileService {
 	return &ProfileService{
-		repository: repositories.NewGenRepository("profile"),
+		repository: profileRepo,
 	}
 }
 
