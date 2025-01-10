@@ -37,15 +37,12 @@ func (s *UserService) CreateUser(c *gin.Context, new_user entities.User) error {
 }
 
 func (s *UserService) DeleteUserByID(c *gin.Context, userId string) (bool, error) {
-	id, conv_err := data.ConvToUuid(userId)
-	if conv_err != nil {
-		return false, conv_err
-	}
-	profileFilter := map[string]any{"user": id}
+	uuid := data.ConvToUuid(userId)
+	profileFilter := map[string]any{"user": uuid}
 	if _, err := s.profileRepository.Delete(c, profileFilter); err != nil {
 		return false, err
 	}
-	userFilter := map[string]any{"_id": id}
+	userFilter := map[string]any{"_id": uuid}
 	if _, err := s.userRepository.Delete(c, userFilter); err != nil {
 		return false, err
 	}
