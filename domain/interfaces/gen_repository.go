@@ -1,4 +1,4 @@
-package i_repositories
+package interfaces
 
 import (
 	"cameron.io/gin-server/infra/data"

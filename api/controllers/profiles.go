@@ -4,21 +4,21 @@ import (
 	"net/http"
 
 	"cameron.io/gin-server/api/middleware"
-	"cameron.io/gin-server/application/i_services"
 	"cameron.io/gin-server/domain/entities"
+	"cameron.io/gin-server/domain/interfaces"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
 
 type ProfileController struct {
-	service i_services.ProfileService
+	service interfaces.ProfileService
 }
 
 func NewProfileController(
 	rGroupApi *gin.RouterGroup,
 	authHandle *jwt.GinJWTMiddleware,
-	service i_services.ProfileService,
+	service interfaces.ProfileService,
 ) {
 	controller := &ProfileController{
 		service: service,

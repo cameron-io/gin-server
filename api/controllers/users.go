@@ -5,22 +5,22 @@ import (
 	"time"
 
 	"cameron.io/gin-server/api/middleware"
-	"cameron.io/gin-server/application/i_services"
-	"cameron.io/gin-server/application/utils"
 	"cameron.io/gin-server/domain/entities"
+	"cameron.io/gin-server/domain/interfaces"
+	"cameron.io/gin-server/domain/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
 
 type UserController struct {
-	service i_services.UserService
+	service interfaces.UserService
 }
 
 func NewUserController(
 	r *gin.RouterGroup,
 	authHandle *jwt.GinJWTMiddleware,
-	service i_services.UserService,
+	service interfaces.UserService,
 ) {
 	controller := &UserController{
 		service: service,

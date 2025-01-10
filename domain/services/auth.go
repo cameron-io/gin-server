@@ -2,8 +2,8 @@ package services
 
 import (
 	"cameron.io/gin-server/api/dto"
-	"cameron.io/gin-server/application/i_services"
-	"cameron.io/gin-server/application/utils"
+	"cameron.io/gin-server/domain/interfaces"
+	"cameron.io/gin-server/domain/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -11,10 +11,10 @@ import (
 )
 
 type AuthService struct {
-	service i_services.UserService
+	service interfaces.UserService
 }
 
-func NewAuthService(service i_services.UserService) *AuthService {
+func NewAuthService(service interfaces.UserService) interfaces.AuthService {
 	return &AuthService{
 		service: service,
 	}
@@ -32,7 +32,7 @@ func (uc *AuthService) Authenticator() func(c *gin.Context) (interface{}, error)
 		}
 
 		existingUser, dbErr := uc.service.FindUserByEmail(c, userLogin.Email)
-		if dbErr != nil {
+		if dbErr != nil || existingUser == nil {
 			return "", jwt.ErrFailedAuthentication
 		}
 

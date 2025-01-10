@@ -1,4 +1,4 @@
-package i_services
+package interfaces
 
 import (
 	"cameron.io/gin-server/domain/entities"

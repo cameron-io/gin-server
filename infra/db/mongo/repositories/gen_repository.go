@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"cameron.io/gin-server/domain/i_repositories"
+	"cameron.io/gin-server/domain/interfaces"
 	"cameron.io/gin-server/infra/data"
 	db "cameron.io/gin-server/infra/db/mongo"
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ type GenRepository struct {
 	collection *mongo.Collection
 }
 
-func NewGenRepository(table string) i_repositories.GenRepository {
+func NewGenRepository(table string) interfaces.GenRepository {
 	collection := db.GetDbCollection(table)
 	return &GenRepository{collection: collection}
 }

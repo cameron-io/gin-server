@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"cameron.io/gin-server/api/dto"
-	"cameron.io/gin-server/application/i_services"
+	"cameron.io/gin-server/domain/interfaces"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +16,7 @@ var (
 	identityKey = "identity"
 )
 
-func InitParams(service i_services.AuthService) *jwt.GinJWTMiddleware {
+func InitParams(service interfaces.AuthService) *jwt.GinJWTMiddleware {
 	return &jwt.GinJWTMiddleware{
 		Realm:       os.Getenv("SERVER_NAME") + "_user",
 		Key:         []byte(os.Getenv("JWT_SECRET")),
