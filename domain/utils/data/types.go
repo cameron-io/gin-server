@@ -1,11 +1,9 @@
 package data
 
-import "github.com/google/uuid"
-
 type Obj map[string]any
 
-func ConvToUuid(str string) uuid.UUID {
-	var uuid [16]byte
+func StrToUuid(str string) [12]byte {
+	var uuid [12]byte
 	copy(uuid[:], str)
 	return uuid
 }

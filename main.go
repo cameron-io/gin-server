@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"cameron.io/gin-server/api/config"
 	"cameron.io/gin-server/api/controllers"
 	"cameron.io/gin-server/api/middleware"
 	"cameron.io/gin-server/domain/services"
@@ -33,10 +34,11 @@ func main() {
 	profileRepository := repositories.NewGenRepository("profile")
 
 	userService := services.NewUserService(userRepository, profileRepository)
-	authService := services.NewAuthService(userService)
 
 	// Accounts - middleware
-	authHandle, err := jwt.New(middleware.InitParams(authService))
+	authService := services.NewAuthService(userService)
+	authController := controllers.NewAuthController(authService)
+	authHandle, err := jwt.New(config.InitParams(*authController))
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}

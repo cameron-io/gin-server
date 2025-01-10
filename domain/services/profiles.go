@@ -21,7 +21,7 @@ func (s *ProfileService) GetProfileByUserId(
 	c *gin.Context,
 	userId string,
 ) (data.Obj, error) {
-	uuid := data.ConvToUuid(userId)
+	uuid := data.StrToUuid(userId)
 	filter := map[string]any{
 		"user": uuid,
 	}
@@ -45,7 +45,7 @@ func (s *ProfileService) UpsertProfile(
 	userId string,
 	profile entities.Profile,
 ) (data.Obj, error) {
-	uuid := data.ConvToUuid(userId)
+	uuid := data.StrToUuid(userId)
 	profile.User = uuid
 	filter := map[string]any{"user": userId}
 	return s.repository.Upsert(c, filter, profile)

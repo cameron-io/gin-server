@@ -35,7 +35,7 @@ func NewUserController(
 	rGroupAuth.GET("/refresh_token", authHandle.RefreshHandler)
 	rGroupAuth.POST("/logout", authHandle.LogoutHandler)
 	rGroupAuth.GET("/info", controller.GetUserInfo)
-	rGroupAuth.DELETE("/", controller.DeleteUser)
+	rGroupAuth.DELETE("/", controller.DeleteUser, authHandle.LogoutHandler)
 }
 
 func (uc *UserController) GetUserInfo(ctx *gin.Context) {
