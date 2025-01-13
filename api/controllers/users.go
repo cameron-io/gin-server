@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"cameron.io/gin-server/api/middleware"
 	"cameron.io/gin-server/domain/entities"
 	"cameron.io/gin-server/domain/interfaces"
-	"cameron.io/gin-server/domain/utils"
+	"cameron.io/gin-server/infra/mail"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -28,7 +29,7 @@ func NewUserController(
 	// Accounts - Public Routes
 	rGroupAcc := r.Group("/accounts")
 	rGroupAcc.POST("/register", controller.RegisterUser)
-	rGroupAcc.POST("/login", authHandle.LoginHandler)
+	rGroupAcc.GET("/login", authHandle.LoginHandler)
 
 	// Accounts - Protected Routes
 	rGroupAuth := rGroupAcc.Group("/", authHandle.MiddlewareFunc())
@@ -68,12 +69,6 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	// Hash password
-	if newUser.Password, err = utils.HashPassword(newUser.Password); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"unexpected_error": err.Error()})
-		return
-	}
-
 	// Create new user
 	newUser.CreatedAt = time.Now().UnixMilli()
 
@@ -81,6 +76,20 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"db_create_error": err.Error()})
 		return
 	}
+
+	token, tokenErr := middleware.CreateAuthToken(newUser.Email)
+	if tokenErr != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"msg": tokenErr})
+		return
+	}
+
+	mail.Send(os.Getenv("EMAIL_SENDER"), "Login", `
+		<html>
+			<body>
+				<a href="http://localhost:5000/api/accounts/login?token=`+token+`">Login Link</a>
+			</body>
+		</html>
+	`)
 
 	ctx.Status(http.StatusCreated)
 }

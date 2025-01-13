@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 
 	"cameron.io/gin-server/api/dto"
+	"cameron.io/gin-server/api/middleware"
 	"cameron.io/gin-server/domain/entities"
 	"cameron.io/gin-server/domain/interfaces"
-	"cameron.io/gin-server/domain/utils"
-	jwt "github.com/appleboy/gin-jwt/v2"
+	gin_jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator"
+	"github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -24,29 +24,27 @@ func NewAuthController(
 	}
 }
 
-func (uc *AuthController) Authenticator(ctx *gin.Context) (interface{}, error) {
-	var userLogin dto.Login
-
-	if err := ctx.ShouldBindJSON(&userLogin); err != nil {
-		return "", jwt.ErrMissingLoginValues
+func (uc *AuthController) Authenticator(ctx *gin.Context) (any, error) {
+	token := ctx.Query("token")
+	jwtToken, jwtErr := jwt.NewParser().Parse(token, middleware.KeyFunc)
+	if jwtErr != nil {
+		return nil, jwtErr
 	}
-	if err := validator.New().Struct(userLogin); err != nil {
-		return "", jwt.ErrMissingLoginValues
-	}
+	claims := gin_jwt.ExtractClaimsFromToken(jwtToken)
 
-	existingUserObj, dbErr := uc.userService.FindUserByEmail(ctx, userLogin.Email)
+	userEmail := claims["email"].(string)
+	existingUserObj, dbErr := uc.userService.FindUserByEmail(ctx, userEmail)
 	if dbErr != nil || existingUserObj == nil {
-		return nil, jwt.ErrFailedAuthentication
+		return nil, gin_jwt.ErrFailedAuthentication
 	}
 
 	var existingUser entities.User
-	dbByte, _ := json.Marshal(existingUserObj)
-	_ = json.Unmarshal(dbByte, &existingUser)
 
-	if err := utils.MatchPasswords(
-		userLogin.Password,
-		existingUser.Password,
-	); err != nil {
+	dbByte, byteErr := json.Marshal(existingUserObj)
+	if byteErr != nil {
+		return nil, byteErr
+	}
+	if err := json.Unmarshal(dbByte, &existingUser); err != nil {
 		return nil, err
 	}
 
