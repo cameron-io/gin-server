@@ -36,8 +36,7 @@ func main() {
 	userService := services.NewUserService(userRepository, profileRepository)
 
 	// Accounts - middleware
-	authService := services.NewAuthService(userService)
-	authController := controllers.NewAuthController(authService)
+	authController := controllers.NewAuthController(userService)
 	authHandle, err := jwt.New(config.InitParams(*authController))
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
