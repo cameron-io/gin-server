@@ -19,9 +19,9 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://github.com"},
-		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
-		AllowHeaders:     []string{"Origin"},
+		AllowOrigins:     []string{"https://studio.apollographql.com"},
+		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"*"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
@@ -49,6 +49,9 @@ func main() {
 	// Profiles
 	profileService := services.NewProfileService(profileRepository)
 	controllers.NewProfileController(rGroupApi, authHandle, profileService)
+
+	// Products
+	controllers.NewGQueryController(rGroupApi)
 
 	r.SetTrustedProxies(nil)
 	r.Run(os.Getenv("SERVER_URI"))
