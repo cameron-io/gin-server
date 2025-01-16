@@ -4,6 +4,19 @@ SERVER_NAME := gopher
 SERVER_APP := main.go
 BUILD_TAG := latest
 
+.PHONY: local
+local: colima
+	$(shell source $(HOME)/.profile)
+	go run .
+
+.PHONY: local-db
+local-db: colima
+	docker compose up -d db
+
+.PHONY: colima
+colima:
+	colima start
+
 .PHONY: dev
 dev: build
 	docker compose up -d server
