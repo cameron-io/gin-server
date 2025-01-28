@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
@@ -11,16 +11,16 @@ import (
 	"github.com/go-playground/validator"
 )
 
-type ProfileController struct {
+type ProfileHandler struct {
 	service interfaces.ProfileService
 }
 
-func NewProfileController(
+func NewProfileHandler(
 	rGroupApi *gin.RouterGroup,
 	authHandle *jwt.GinJWTMiddleware,
 	service interfaces.ProfileService,
 ) {
-	controller := &ProfileController{
+	controller := &ProfileHandler{
 		service: service,
 	}
 	rGroupProfile := rGroupApi.Group("/profiles", authHandle.MiddlewareFunc())
@@ -30,7 +30,7 @@ func NewProfileController(
 	rGroupProfile.GET("/user/:user_id", controller.GetProfileByUserId)
 }
 
-func (pc *ProfileController) GetCurrentUserProfile(ctx *gin.Context) {
+func (pc *ProfileHandler) GetCurrentUserProfile(ctx *gin.Context) {
 	userId := middleware.GetUserIdFromClaims(ctx)
 
 	profile, dbErr := pc.service.GetProfileByUserId(ctx, userId)
@@ -42,7 +42,7 @@ func (pc *ProfileController) GetCurrentUserProfile(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, profile)
 }
 
-func (pc *ProfileController) GetProfileByUserId(ctx *gin.Context) {
+func (pc *ProfileHandler) GetProfileByUserId(ctx *gin.Context) {
 	userId := ctx.Param("user_id")
 
 	profile, dbErr := pc.service.GetProfileByUserId(ctx, userId)
@@ -54,7 +54,7 @@ func (pc *ProfileController) GetProfileByUserId(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, profile)
 }
 
-func (pc *ProfileController) UpsertProfile(ctx *gin.Context) {
+func (pc *ProfileHandler) UpsertProfile(ctx *gin.Context) {
 	var newProfile entities.Profile
 
 	if err := ctx.ShouldBindJSON(&newProfile); err != nil {
@@ -79,7 +79,7 @@ func (pc *ProfileController) UpsertProfile(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, profile)
 }
 
-func (pc *ProfileController) GetAllProfiles(ctx *gin.Context) {
+func (pc *ProfileHandler) GetAllProfiles(ctx *gin.Context) {
 	profiles, err := pc.service.GetAllProfiles(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"db_all_profiles_error": err.Error()})

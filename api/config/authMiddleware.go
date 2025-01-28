@@ -5,14 +5,14 @@ import (
 	"os"
 	"time"
 
-	"cameron.io/gin-server/api/controllers"
 	"cameron.io/gin-server/api/dto"
+	"cameron.io/gin-server/api/handlers"
 	"cameron.io/gin-server/api/middleware"
 	gin_jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
 
-func InitParams(controller controllers.AuthController) *gin_jwt.GinJWTMiddleware {
+func InitParams(controller handlers.AuthHandler) *gin_jwt.GinJWTMiddleware {
 	return &gin_jwt.GinJWTMiddleware{
 		Realm:       os.Getenv("SERVER_NAME") + "_user",
 		Key:         []byte(os.Getenv("JWT_SECRET")),

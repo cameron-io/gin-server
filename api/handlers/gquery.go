@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-func NewGQueryController(r *gin.RouterGroup) {
+func NewGQueryHandler(r *gin.RouterGroup) {
 	var schema, _ = graphql.NewSchema(
 		graphql.SchemaConfig{
 			Query:    GQueryType(),

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"cameron.io/gin-server/api/config"
-	"cameron.io/gin-server/api/controllers"
+	"cameron.io/gin-server/api/handlers"
 	"cameron.io/gin-server/api/middleware"
 	"cameron.io/gin-server/domain/services"
 	"cameron.io/gin-server/infra/db/mongo/repositories"
@@ -36,22 +36,23 @@ func main() {
 	userService := services.NewUserService(userRepository, profileRepository)
 
 	// Accounts - middleware
-	authController := controllers.NewAuthController(userService)
-	authHandle, err := jwt.New(config.InitParams(*authController))
+	authHandler := handlers.NewAuthHandler(userService)
+	authHandle, err := jwt.New(config.InitParams(*authHandler))
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
 	r.Use(middleware.InitHandlerMiddleware(authHandle))
 
-	// Accounts - controller
-	controllers.NewUserController(rGroupApi, authHandle, userService)
+	// Accounts - request handler
+	mailService := services.NewMailService()
+	handlers.NewUserHandler(rGroupApi, authHandle, userService, mailService)
 
-	// Profiles
+	// Profiles - request handler
 	profileService := services.NewProfileService(profileRepository)
-	controllers.NewProfileController(rGroupApi, authHandle, profileService)
+	handlers.NewProfileHandler(rGroupApi, authHandle, profileService)
 
-	// Products
-	controllers.NewGQueryController(rGroupApi)
+	// Products - GraphQL handler
+	handlers.NewGQueryHandler(rGroupApi)
 
 	r.SetTrustedProxies(nil)
 	r.Run(os.Getenv("SERVER_URI"))

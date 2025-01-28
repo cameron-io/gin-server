@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
@@ -13,18 +13,18 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type AuthController struct {
+type AuthHandler struct {
 	userService interfaces.UserService
 }
 
-func NewAuthController(
-	userService interfaces.UserService) *AuthController {
-	return &AuthController{
+func NewAuthHandler(
+	userService interfaces.UserService) *AuthHandler {
+	return &AuthHandler{
 		userService: userService,
 	}
 }
 
-func (uc *AuthController) Authenticator(ctx *gin.Context) (any, error) {
+func (uc *AuthHandler) Authenticator(ctx *gin.Context) (any, error) {
 	token := ctx.Query("token")
 	jwtToken, jwtErr := jwt.NewParser().Parse(token, middleware.KeyFunc)
 	if jwtErr != nil {
