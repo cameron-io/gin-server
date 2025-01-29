@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitParams(controller handlers.AuthHandler) *gin_jwt.GinJWTMiddleware {
+func InitParams(handler handlers.AuthHandler) *gin_jwt.GinJWTMiddleware {
 	return &gin_jwt.GinJWTMiddleware{
 		Realm:       os.Getenv("SERVER_NAME") + "_user",
 		Key:         []byte(os.Getenv("JWT_SECRET")),
@@ -23,7 +23,7 @@ func InitParams(controller handlers.AuthHandler) *gin_jwt.GinJWTMiddleware {
 		KeyFunc:     middleware.KeyFunc,
 
 		IdentityHandler: identityHandler(),
-		Authenticator:   controller.Authenticator,
+		Authenticator:   handler.Authenticator,
 
 		SendCookie:     true,
 		SecureCookie:   os.Getenv("SERVER_ENV") == "production",

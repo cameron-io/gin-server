@@ -20,14 +20,14 @@ func NewProfileHandler(
 	authHandle *jwt.GinJWTMiddleware,
 	service interfaces.ProfileService,
 ) {
-	controller := &ProfileHandler{
+	handler := &ProfileHandler{
 		service: service,
 	}
 	rGroupProfile := rGroupApi.Group("/profiles", authHandle.MiddlewareFunc())
-	rGroupProfile.POST("/", controller.UpsertProfile)
-	rGroupProfile.GET("/", controller.GetAllProfiles)
-	rGroupProfile.GET("/me", controller.GetCurrentUserProfile)
-	rGroupProfile.GET("/user/:user_id", controller.GetProfileByUserId)
+	rGroupProfile.POST("/", handler.UpsertProfile)
+	rGroupProfile.GET("/", handler.GetAllProfiles)
+	rGroupProfile.GET("/me", handler.GetCurrentUserProfile)
+	rGroupProfile.GET("/user/:user_id", handler.GetProfileByUserId)
 }
 
 func (pc *ProfileHandler) GetCurrentUserProfile(ctx *gin.Context) {
