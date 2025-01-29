@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 
 	"cameron.io/gin-server/internal/api/dto"
-	"cameron.io/gin-server/internal/api/middleware"
 	"cameron.io/gin-server/internal/domain/include"
 	"cameron.io/gin-server/internal/domain/models"
+	"cameron.io/gin-server/pkg/middleware"
 	gin_jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"

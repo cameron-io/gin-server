@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
-	"cameron.io/gin-server/internal/api/middleware"
 	"cameron.io/gin-server/internal/domain/include"
 	"cameron.io/gin-server/internal/domain/models"
+	"cameron.io/gin-server/pkg/middleware"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"

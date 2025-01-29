@@ -7,7 +7,7 @@ import (
 
 	"cameron.io/gin-server/internal/api/dto"
 	"cameron.io/gin-server/internal/api/handlers"
-	"cameron.io/gin-server/internal/api/middleware"
+	"cameron.io/gin-server/pkg/middleware"
 	gin_jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )

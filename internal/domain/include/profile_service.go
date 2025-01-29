@@ -2,7 +2,7 @@ package include
 
 import (
 	"cameron.io/gin-server/internal/domain/models"
-	"cameron.io/gin-server/pkg/utils/data"
+	"cameron.io/gin-server/pkg/db/data"
 	"github.com/gin-gonic/gin"
 )
 
