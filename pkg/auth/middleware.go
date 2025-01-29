@@ -24,16 +24,16 @@ func InitHandlerMiddleware(authMiddleware *gin_jwt.GinJWTMiddleware) gin.Handler
 	}
 }
 
+func IdentityHandler(c *gin.Context) interface{} {
+	claims := gin_jwt.ExtractClaims(c)
+	return claims[IdentityKey]
+}
+
 func KeyFunc(token *jwt.Token) (interface{}, error) {
 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 	}
 	return []byte(os.Getenv("JWT_SECRET")), nil
-}
-
-func GetUserIdFromClaims(c *gin.Context) string {
-	user, _ := c.Get(IdentityKey)
-	return user.(map[string]interface{})["id"].(string)
 }
 
 func CreateAuthToken(email string) (string, error) {
@@ -54,4 +54,9 @@ func CreateAuthToken(email string) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func GetUserIdFromClaims(c *gin.Context) string {
+	user, _ := c.Get(IdentityKey)
+	return user.(map[string]interface{})["id"].(string)
 }
