@@ -4,17 +4,18 @@ import (
 	"cameron.io/gin-server/internal/domain/include"
 	"cameron.io/gin-server/internal/domain/models"
 	"cameron.io/gin-server/pkg/db/data"
+	"cameron.io/gin-server/pkg/db/interfaces"
 	"github.com/gin-gonic/gin"
 )
 
 type UserService struct {
-	userRepository    include.GenRepository
-	profileRepository include.GenRepository
+	userRepository    interfaces.GenRepository
+	profileRepository interfaces.GenRepository
 }
 
 func NewUserService(
-	userRepo include.GenRepository,
-	profileRepo include.GenRepository) include.UserService {
+	userRepo interfaces.GenRepository,
+	profileRepo interfaces.GenRepository) include.UserService {
 	return &UserService{
 		userRepository:    userRepo,
 		profileRepository: profileRepo,
