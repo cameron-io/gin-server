@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"cameron.io/gin-server/pkg/db/data"
 	"cameron.io/gin-server/pkg/db/interfaces"
 	db "cameron.io/gin-server/pkg/db/mongo"
+	"cameron.io/gin-server/pkg/db/utils/data"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
