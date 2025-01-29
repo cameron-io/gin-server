@@ -3,22 +3,22 @@ package handlers
 import (
 	"net/http"
 
-	"cameron.io/gin-server/api/middleware"
-	"cameron.io/gin-server/domain/entities"
-	"cameron.io/gin-server/domain/interfaces"
+	"cameron.io/gin-server/internal/api/middleware"
+	"cameron.io/gin-server/internal/domain/include"
+	"cameron.io/gin-server/internal/domain/models"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
 
 type ProfileHandler struct {
-	service interfaces.ProfileService
+	service include.ProfileService
 }
 
 func NewProfileHandler(
 	rGroupApi *gin.RouterGroup,
 	authHandle *jwt.GinJWTMiddleware,
-	service interfaces.ProfileService,
+	service include.ProfileService,
 ) {
 	handler := &ProfileHandler{
 		service: service,
@@ -55,7 +55,7 @@ func (pc *ProfileHandler) GetProfileByUserId(ctx *gin.Context) {
 }
 
 func (pc *ProfileHandler) UpsertProfile(ctx *gin.Context) {
-	var newProfile entities.Profile
+	var newProfile models.Profile
 
 	if err := ctx.ShouldBindJSON(&newProfile); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

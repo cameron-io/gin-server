@@ -3,14 +3,14 @@ package services
 import (
 	"os"
 
-	"cameron.io/gin-server/domain/interfaces"
-	"cameron.io/gin-server/infra/mail"
+	"cameron.io/gin-server/internal/domain/include"
+	"cameron.io/gin-server/pkg/mail"
 )
 
 type MailService struct {
 }
 
-func NewMailService() interfaces.MailService {
+func NewMailService() include.MailService {
 	return &MailService{}
 }
 

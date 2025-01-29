@@ -1,20 +1,20 @@
 package services
 
 import (
-	"cameron.io/gin-server/domain/entities"
-	"cameron.io/gin-server/domain/interfaces"
-	"cameron.io/gin-server/domain/utils/data"
+	"cameron.io/gin-server/internal/domain/include"
+	"cameron.io/gin-server/internal/domain/models"
+	"cameron.io/gin-server/pkg/utils/data"
 	"github.com/gin-gonic/gin"
 )
 
 type UserService struct {
-	userRepository    interfaces.GenRepository
-	profileRepository interfaces.GenRepository
+	userRepository    include.GenRepository
+	profileRepository include.GenRepository
 }
 
 func NewUserService(
-	userRepo interfaces.GenRepository,
-	profileRepo interfaces.GenRepository) interfaces.UserService {
+	userRepo include.GenRepository,
+	profileRepo include.GenRepository) include.UserService {
 	return &UserService{
 		userRepository:    userRepo,
 		profileRepository: profileRepo,
@@ -32,7 +32,7 @@ func (s *UserService) FindUserByEmail(c *gin.Context, email string) (data.Obj, e
 	return result, nil
 }
 
-func (s *UserService) CreateUser(c *gin.Context, new_user entities.User) error {
+func (s *UserService) CreateUser(c *gin.Context, new_user models.User) error {
 	return s.userRepository.Insert(c, new_user)
 }
 

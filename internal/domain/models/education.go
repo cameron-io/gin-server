@@ -1,4 +1,4 @@
-package entities
+package models
 
 type Education struct {
 	School       string `json:"school" validate:"required"`

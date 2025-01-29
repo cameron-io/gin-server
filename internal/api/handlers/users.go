@@ -4,25 +4,25 @@ import (
 	"net/http"
 	"time"
 
-	"cameron.io/gin-server/api/dto"
-	"cameron.io/gin-server/api/middleware"
-	"cameron.io/gin-server/domain/entities"
-	"cameron.io/gin-server/domain/interfaces"
+	"cameron.io/gin-server/internal/api/dto"
+	"cameron.io/gin-server/internal/api/middleware"
+	"cameron.io/gin-server/internal/domain/include"
+	"cameron.io/gin-server/internal/domain/models"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
 )
 
 type UserHandler struct {
-	userService interfaces.UserService
-	mailService interfaces.MailService
+	userService include.UserService
+	mailService include.MailService
 }
 
 func NewUserHandler(
 	r *gin.RouterGroup,
 	authHandle *jwt.GinJWTMiddleware,
-	userService interfaces.UserService,
-	mailService interfaces.MailService,
+	userService include.UserService,
+	mailService include.MailService,
 ) {
 	userHandle := &UserHandler{
 		userService: userService,
@@ -73,7 +73,7 @@ func (u *UserHandler) LoginUser(ctx *gin.Context) {
 }
 
 func (u *UserHandler) RegisterUser(ctx *gin.Context) {
-	var newUser entities.User
+	var newUser models.User
 
 	if err := ctx.ShouldBindJSON(&newUser); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

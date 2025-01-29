@@ -3,10 +3,10 @@ package handlers
 import (
 	"encoding/json"
 
-	"cameron.io/gin-server/api/dto"
-	"cameron.io/gin-server/api/middleware"
-	"cameron.io/gin-server/domain/entities"
-	"cameron.io/gin-server/domain/interfaces"
+	"cameron.io/gin-server/internal/api/dto"
+	"cameron.io/gin-server/internal/api/middleware"
+	"cameron.io/gin-server/internal/domain/include"
+	"cameron.io/gin-server/internal/domain/models"
 	gin_jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -14,11 +14,11 @@ import (
 )
 
 type AuthHandler struct {
-	userService interfaces.UserService
+	userService include.UserService
 }
 
 func NewAuthHandler(
-	userService interfaces.UserService) *AuthHandler {
+	userService include.UserService) *AuthHandler {
 	return &AuthHandler{
 		userService: userService,
 	}
@@ -38,7 +38,7 @@ func (uc *AuthHandler) Authenticator(ctx *gin.Context) (any, error) {
 		return nil, gin_jwt.ErrFailedAuthentication
 	}
 
-	var existingUser entities.User
+	var existingUser models.User
 
 	dbByte, byteErr := json.Marshal(existingUserObj)
 	if byteErr != nil {

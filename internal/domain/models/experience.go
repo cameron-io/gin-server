@@ -1,4 +1,4 @@
-package entities
+package models
 
 type Experience struct {
 	Title       string `json:"title" validate:"required"`

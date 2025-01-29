@@ -1,17 +1,17 @@
 package services
 
 import (
-	"cameron.io/gin-server/domain/entities"
-	"cameron.io/gin-server/domain/interfaces"
-	"cameron.io/gin-server/domain/utils/data"
+	"cameron.io/gin-server/internal/domain/include"
+	"cameron.io/gin-server/internal/domain/models"
+	"cameron.io/gin-server/pkg/utils/data"
 	"github.com/gin-gonic/gin"
 )
 
 type ProfileService struct {
-	repository interfaces.GenRepository
+	repository include.GenRepository
 }
 
-func NewProfileService(profileRepo interfaces.GenRepository) interfaces.ProfileService {
+func NewProfileService(profileRepo include.GenRepository) include.ProfileService {
 	return &ProfileService{
 		repository: profileRepo,
 	}
@@ -43,7 +43,7 @@ func (s *ProfileService) GetAllProfiles(c *gin.Context) ([]data.Obj, error) {
 func (s *ProfileService) UpsertProfile(
 	c *gin.Context,
 	userId string,
-	profile entities.Profile,
+	profile models.Profile,
 ) (data.Obj, error) {
 	uuid := data.StrToUuid(userId)
 	profile.User = uuid

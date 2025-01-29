@@ -1,4 +1,4 @@
-package entities
+package models
 
 type Profile struct {
 	User           [12]byte `json:"user"`
