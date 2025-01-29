@@ -1,7 +1,7 @@
 package services
 
 import (
-	"cameron.io/gin-server/internal/domain/models"
+	"cameron.io/gin-server/internal/models"
 	"cameron.io/gin-server/pkg/db/data"
 	"cameron.io/gin-server/pkg/db/interfaces"
 	"github.com/gin-gonic/gin"

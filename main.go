@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	"cameron.io/gin-server/internal/api/config"
-	"cameron.io/gin-server/internal/api/handlers"
-	"cameron.io/gin-server/internal/domain/services"
+	"cameron.io/gin-server/internal/config"
+	"cameron.io/gin-server/internal/handlers"
+	"cameron.io/gin-server/internal/services"
 	"cameron.io/gin-server/pkg/db/mongo/repositories"
 	"cameron.io/gin-server/pkg/middleware"
 	jwt "github.com/appleboy/gin-jwt/v2"

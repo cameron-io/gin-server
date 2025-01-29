@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
-	"cameron.io/gin-server/internal/api/dto"
-	"cameron.io/gin-server/internal/domain/models"
-	"cameron.io/gin-server/internal/domain/services"
+	"cameron.io/gin-server/internal/dto"
+	"cameron.io/gin-server/internal/models"
+	"cameron.io/gin-server/internal/services"
 	"cameron.io/gin-server/pkg/middleware"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
