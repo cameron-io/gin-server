@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"cameron.io/gin-server/internal/domain/include"
 	"cameron.io/gin-server/internal/domain/models"
+	"cameron.io/gin-server/internal/domain/services"
 	"cameron.io/gin-server/pkg/middleware"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -12,13 +12,13 @@ import (
 )
 
 type ProfileHandler struct {
-	service include.ProfileService
+	service *services.ProfileService
 }
 
 func NewProfileHandler(
 	rGroupApi *gin.RouterGroup,
 	authHandle *jwt.GinJWTMiddleware,
-	service include.ProfileService,
+	service *services.ProfileService,
 ) {
 	handler := &ProfileHandler{
 		service: service,

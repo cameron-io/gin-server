@@ -1,7 +1,6 @@
 package services
 
 import (
-	"cameron.io/gin-server/internal/domain/include"
 	"cameron.io/gin-server/internal/domain/models"
 	"cameron.io/gin-server/pkg/db/data"
 	"cameron.io/gin-server/pkg/db/interfaces"
@@ -15,7 +14,7 @@ type UserService struct {
 
 func NewUserService(
 	userRepo interfaces.GenRepository,
-	profileRepo interfaces.GenRepository) include.UserService {
+	profileRepo interfaces.GenRepository) *UserService {
 	return &UserService{
 		userRepository:    userRepo,
 		profileRepository: profileRepo,

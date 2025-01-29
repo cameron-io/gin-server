@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"cameron.io/gin-server/internal/api/dto"
-	"cameron.io/gin-server/internal/domain/include"
 	"cameron.io/gin-server/internal/domain/models"
+	"cameron.io/gin-server/internal/domain/services"
 	"cameron.io/gin-server/pkg/middleware"
 	gin_jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -14,11 +14,11 @@ import (
 )
 
 type AuthHandler struct {
-	userService include.UserService
+	userService *services.UserService
 }
 
 func NewAuthHandler(
-	userService include.UserService) *AuthHandler {
+	userService *services.UserService) *AuthHandler {
 	return &AuthHandler{
 		userService: userService,
 	}

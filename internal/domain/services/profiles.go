@@ -1,7 +1,6 @@
 package services
 
 import (
-	"cameron.io/gin-server/internal/domain/include"
 	"cameron.io/gin-server/internal/domain/models"
 	"cameron.io/gin-server/pkg/db/data"
 	"cameron.io/gin-server/pkg/db/interfaces"
@@ -12,7 +11,7 @@ type ProfileService struct {
 	repository interfaces.GenRepository
 }
 
-func NewProfileService(profileRepo interfaces.GenRepository) include.ProfileService {
+func NewProfileService(profileRepo interfaces.GenRepository) *ProfileService {
 	return &ProfileService{
 		repository: profileRepo,
 	}

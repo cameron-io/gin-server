@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"cameron.io/gin-server/internal/api/dto"
-	"cameron.io/gin-server/internal/domain/include"
 	"cameron.io/gin-server/internal/domain/models"
+	"cameron.io/gin-server/internal/domain/services"
 	"cameron.io/gin-server/pkg/middleware"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -14,15 +14,15 @@ import (
 )
 
 type UserHandler struct {
-	userService include.UserService
-	mailService include.MailService
+	userService *services.UserService
+	mailService *services.MailService
 }
 
 func NewUserHandler(
 	r *gin.RouterGroup,
 	authHandle *jwt.GinJWTMiddleware,
-	userService include.UserService,
-	mailService include.MailService,
+	userService *services.UserService,
+	mailService *services.MailService,
 ) {
 	userHandle := &UserHandler{
 		userService: userService,
