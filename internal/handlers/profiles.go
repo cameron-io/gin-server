@@ -5,7 +5,7 @@ import (
 
 	"cameron.io/gin-server/internal/models"
 	"cameron.io/gin-server/internal/services"
-	"cameron.io/gin-server/pkg/middleware"
+	"cameron.io/gin-server/pkg/auth"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -31,7 +31,7 @@ func NewProfileHandler(
 }
 
 func (pc *ProfileHandler) GetCurrentUserProfile(ctx *gin.Context) {
-	userId := middleware.GetUserIdFromClaims(ctx)
+	userId := auth.GetUserIdFromClaims(ctx)
 
 	profile, dbErr := pc.service.GetProfileByUserId(ctx, userId)
 	if dbErr != nil {
@@ -68,7 +68,7 @@ func (pc *ProfileHandler) UpsertProfile(ctx *gin.Context) {
 		return
 	}
 
-	userId := middleware.GetUserIdFromClaims(ctx)
+	userId := auth.GetUserIdFromClaims(ctx)
 
 	profile, err := pc.service.UpsertProfile(ctx, userId, newProfile)
 	if err != nil {

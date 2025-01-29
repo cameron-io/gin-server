@@ -7,7 +7,7 @@ import (
 
 	"cameron.io/gin-server/internal/dto"
 	"cameron.io/gin-server/internal/handlers"
-	"cameron.io/gin-server/pkg/middleware"
+	"cameron.io/gin-server/pkg/auth"
 	gin_jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
@@ -18,9 +18,9 @@ func InitParams(handler handlers.AuthHandler) *gin_jwt.GinJWTMiddleware {
 		Key:         []byte(os.Getenv("JWT_SECRET")),
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
-		IdentityKey: middleware.IdentityKey,
+		IdentityKey: auth.IdentityKey,
 		PayloadFunc: payloadFunc(),
-		KeyFunc:     middleware.KeyFunc,
+		KeyFunc:     auth.KeyFunc,
 
 		IdentityHandler: identityHandler(),
 		Authenticator:   handler.Authenticator,
@@ -41,7 +41,7 @@ func payloadFunc() func(data interface{}) gin_jwt.MapClaims {
 	return func(data interface{}) gin_jwt.MapClaims {
 		if user, ok := data.(*dto.Identity); ok {
 			return gin_jwt.MapClaims{
-				middleware.IdentityKey: user,
+				auth.IdentityKey: user,
 			}
 		}
 		return gin_jwt.MapClaims{}
@@ -51,6 +51,6 @@ func payloadFunc() func(data interface{}) gin_jwt.MapClaims {
 func identityHandler() func(c *gin.Context) interface{} {
 	return func(c *gin.Context) interface{} {
 		claims := gin_jwt.ExtractClaims(c)
-		return claims[middleware.IdentityKey]
+		return claims[auth.IdentityKey]
 	}
 }

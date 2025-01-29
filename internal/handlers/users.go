@@ -7,7 +7,7 @@ import (
 	"cameron.io/gin-server/internal/dto"
 	"cameron.io/gin-server/internal/models"
 	"cameron.io/gin-server/internal/services"
-	"cameron.io/gin-server/pkg/middleware"
+	"cameron.io/gin-server/pkg/auth"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -61,7 +61,7 @@ func (u *UserHandler) LoginUser(ctx *gin.Context) {
 		return
 	}
 
-	token, tokenErr := middleware.CreateAuthToken(userLogin.Email)
+	token, tokenErr := auth.CreateAuthToken(userLogin.Email)
 	if tokenErr != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"msg": tokenErr})
 		return
@@ -105,7 +105,7 @@ func (u *UserHandler) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	token, tokenErr := middleware.CreateAuthToken(newUser.Email)
+	token, tokenErr := auth.CreateAuthToken(newUser.Email)
 	if tokenErr != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"msg": tokenErr})
 		return
@@ -117,7 +117,7 @@ func (u *UserHandler) RegisterUser(ctx *gin.Context) {
 }
 
 func (u *UserHandler) DeleteUser(ctx *gin.Context) {
-	userId := middleware.GetUserIdFromClaims(ctx)
+	userId := auth.GetUserIdFromClaims(ctx)
 
 	res, err := u.userService.DeleteUserByID(ctx, userId)
 	if err != nil {

@@ -8,8 +8,8 @@ import (
 	"cameron.io/gin-server/internal/config"
 	"cameron.io/gin-server/internal/handlers"
 	"cameron.io/gin-server/internal/services"
+	"cameron.io/gin-server/pkg/auth"
 	"cameron.io/gin-server/pkg/db/mongo/repositories"
-	"cameron.io/gin-server/pkg/middleware"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -41,7 +41,7 @@ func main() {
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
-	r.Use(middleware.InitHandlerMiddleware(authHandle))
+	r.Use(auth.InitHandlerMiddleware(authHandle))
 
 	// Accounts - request handler
 	mailService := services.NewMailService()

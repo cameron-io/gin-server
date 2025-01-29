@@ -6,7 +6,7 @@ import (
 	"cameron.io/gin-server/internal/dto"
 	"cameron.io/gin-server/internal/models"
 	"cameron.io/gin-server/internal/services"
-	"cameron.io/gin-server/pkg/middleware"
+	"cameron.io/gin-server/pkg/auth"
 	gin_jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -26,7 +26,7 @@ func NewAuthHandler(
 
 func (uc *AuthHandler) Authenticator(ctx *gin.Context) (any, error) {
 	token := ctx.Query("token")
-	jwtToken, jwtErr := jwt.NewParser().Parse(token, middleware.KeyFunc)
+	jwtToken, jwtErr := jwt.NewParser().Parse(token, auth.KeyFunc)
 	if jwtErr != nil {
 		return nil, jwtErr
 	}
